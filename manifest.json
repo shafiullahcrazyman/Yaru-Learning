@@ -1,6 +1,6 @@
 {
-  "name": "My Web App",
-  "short_name": "MyApp",
+  "name": "Yaru Learning",
+  "short_name": "Yaru Learning",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#161616",
@@ -18,4 +18,5 @@
       "purpose": "any maskable"
     }
   ]
+
 }
