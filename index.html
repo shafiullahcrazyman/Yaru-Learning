@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <!-- Manifest for Android/Chrome -->
 <link rel="manifest" href="manifest.json">
 
@@ -40,50 +40,57 @@
             background-color: var(--background-color);
             color: var(--text-color);
             
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
+            width: 100%;
+            height: 100dvh;
+            position: fixed;
+            overflow: hidden;
             
             -webkit-tap-highlight-color: transparent;
         }
 
         .app-container {
-            /* Changed from 20px padding to 0 */
             width: 100%;
             max-width: 500px;
-            box-sizing: border-box;
-            margin: 0 auto; 
-            padding: 0; 
+            height: 100%;
+            margin: 0 auto;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
         }
         
         /* Scrollable Content Wrapper */
         .content-wrapper {
-            flex-grow: 1; 
+            flex: 1;
             overflow-y: auto; 
-            padding-bottom: var(--input-bar-height); 
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
             width: 100%;
-            /* Added padding here for content spacing */
             padding-left: 20px; 
             padding-right: 20px;
+            padding-top: 0;
+            padding-bottom: 120px;
             box-sizing: border-box;
         }
 
         /* Fixed Input Bar (The Footer) */
         .fixed-input-bar {
             position: fixed; 
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: env(safe-area-inset-bottom, 0px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
             height: var(--input-bar-height);
             background-color: var(--card-bg);
-            box-shadow: none; 
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3); 
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0 20px;
             box-sizing: border-box;
-            max-width: 500px; 
-            margin: 0 auto; 
+            z-index: 1000;
         }
 
         /* Window Styles */
@@ -172,7 +179,7 @@
         .sentence-display {
             font-size: 2em;
             text-align: justify; 
-            margin-bottom: 25px;
+            margin-bottom: 40px;
             line-height: 1.7;
             cursor: default;
             padding: 0; 
@@ -736,11 +743,21 @@ Follow this JSON structure EXACTLY:
   ]
 }
 
-- "surface": The text to display.
-- "furigana": The reading that goes above the text. For hiragana/katakana, this is the same as the surface.
-- "isKanji": Must be a boolean (true if the surface is Kanji that needs furigana, otherwise false).
+Additional Rules
 
-Example of a correct segment for the kanji '学校':
+"surface": The Japanese text to display.
+
+"furigana": The reading that appears above the Kanji. For Hiragana/Katakana, it’s the same as "surface".
+
+"romaji": The romaji (Latin) reading of the surface.
+
+"meaning": The English meaning of the surface.
+
+"isKanji": Must be a boolean — true if the surface is Kanji that needs furigana, otherwise false.
+
+
+Example of a correct segment for the Kanji 学校:
+
 {
   "surface": "学校",
   "furigana": "がっこう",
@@ -749,7 +766,31 @@ Example of a correct segment for the kanji '学校':
   "isKanji": true
 }
 
-Now, generate a new, complete JSON object for a short story of about 3-4 sentences (like the one in the user's image) so the content blocks array has multiple sentence objects.
+Important Feature
+
+Punctuation marks (like "。" and "、") must always be separate segments — never attached to words.
+Each punctuation mark should have:
+
+{
+  "surface": "。",
+  "furigana": "。",
+  "romaji": ".",
+  "meaning": "period",
+  "isKanji": false
+}
+
+or
+
+{
+  "surface": "、",
+  "furigana": "、",
+  "romaji": ",",
+  "meaning": "comma",
+  "isKanji": false
+}
+
+
+Now, generate a new, complete JSON object for a short story of about 3–5 sentences, so the contentBlocks array contains multiple "sentence" objects.
 `;
 
         // --- 4. Core App Functions ---
@@ -960,6 +1001,15 @@ Now, generate a new, complete JSON object for a short story of about 3-4 sentenc
         });
 
         userInputEl.addEventListener('input', handleTyping);
+
+        // Simple focus handler - let the browser handle keyboard
+        userInputEl.addEventListener('focus', () => {
+            // Small delay to allow keyboard to appear
+            setTimeout(() => {
+                // Ensure input is visible
+                userInputEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        });
 
         // --- 6. Initial State & Load Check ---
         populateVoiceList(); 
