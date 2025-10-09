@@ -512,7 +512,7 @@
                 const voices = synth.getVoices();
                 const enVoice = voices.find(v => v.lang && v.lang.startsWith('en'));
                 if (enVoice) en.voice = enVoice;
-                en.lang = 'en-US';
+                en.lang = 'en-GB';
                 en.rate = 0.9;
                 en.pitch = 0.8;
                 synth.speak(en);
@@ -1034,3 +1034,4 @@ Now, generate a new, complete JSON object for a short story of about 3–5 sente
     </script>
 </body>
 </html>
+
