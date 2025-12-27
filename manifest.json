@@ -3,8 +3,8 @@
   "short_name": "Yaru Learning",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#141118",
-  "theme_color": "#141118",
+  "background_color": "#2e3f13",
+  "theme_color": "#2e3f13",
   "icons": [
     {
       "src": "icon.png",
@@ -18,4 +18,5 @@
       "purpose": "any maskable"
     }
   ]
+
 }
