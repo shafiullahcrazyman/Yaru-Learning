@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" href="icon.png">
+    <meta name="theme-color" content="#141218">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Yaru Learning">
+    <title>Yaru Learning by Shafiullah</title>
+    <!-- Manifest for Android/Chrome -->
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS / Safari Home Screen -->
+<link rel="apple-touch-icon" href="icon.png">
+
+<!-- Favicon fallback -->
+<link rel="icon" href="icon.png">
+
+<!-- Theme colors -->
+<meta name="theme-color" content="#141118">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Yaru Learning">
+    <style>
+        /* --- Material 3 & Custom Theme Variables --- */
+        :root {
+            /* --- DEFAULT (DARK) --- */
+            --background-color: #141218; 
+            --surface-container: #1d1b20;
+            --surface-container-high: #2b2930;
+            --on-surface: #e6e1e5;
+            --on-surface-variant: #cac4d0;
+            
+            /* UPDATED: M3 Expressive Green */
+            --m3-primary: #C4EED0;
+            --m3-on-primary: #06210E;
+            --m3-primary-container: #3A693B;
+            
+            /* Glass Background for Input Field */
+            --glass-bg: rgba(29, 27, 32, 0.85);
+
+            /* Shape Colors */
+            --shape-color-1: #D0BCFF; 
+            --shape-color-2: #F2B8B5; 
+            --shape-color-3: #6DD58C; 
+            --shape-color-4: #A0C4FF; 
+            --shape-color-5: #FFD966; 
+            --shape-color-6: #EDB9F6; 
+
+            --correct-color: #76c639;    
+            --completed-color: #49454f; 
+            --incorrect-color: #ffb4ab;  
+            --error-bg: #410e0b;
+            --card-border: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.03);
+
+            --radius-full: 999px;
+            --radius-card: 28px; 
+        }
+
+        /* --- LIGHT THEME OVERRIDES --- */
+        [data-theme="light"] {
+            --background-color: #FEF7FF;
+            --surface-container: #F3EDF7;
+            --surface-container-high: #E8DEF8;
+            --on-surface: #1D1B20;
+            --on-surface-variant: #49454F;
+            
+            --m3-primary: #3A693B;
+            --m3-on-primary: #FFFFFF;
+            --m3-primary-container: #C4EED0;
+
+            --glass-bg: rgba(243, 237, 247, 0.9);
+
+            --shape-color-1: #9A82DB; 
+            --shape-color-2: #E49793; 
+            --shape-color-3: #58A973; 
+            --shape-color-4: #7DA6E8; 
+            --shape-color-5: #EBC13D; 
+            --shape-color-6: #D191DE; 
+
+            --correct-color: #4E8542;
+            --completed-color: #E0E0E0;
+            --incorrect-color: #BA1A1A;
+            --error-bg: #FFDAD6;
+            --card-border: rgba(0, 0, 0, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.6);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0; 
+            background-color: var(--background-color);
+            color: var(--on-surface);
+            width: 100%;
+            height: 100dvh;
+            position: fixed;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 600px; 
+            height: 100%;
+            margin: 0 auto;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            overflow-y: auto; 
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            padding: 0 32px 160px 32px;
+            box-sizing: border-box;
+        }
+
+        /* --- Floating Fixed Bar (Invisible Container) --- */
+        .fixed-input-bar {
+            position: fixed; 
+            bottom: 30px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px); 
+            max-width: 550px;
+            height: auto;
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            z-index: 1000;
+            pointer-events: none; 
+        }
+        
+        .fixed-input-bar > * {
+            pointer-events: auto; 
+        }
+
+        .window {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.2, 0.0, 0, 1.0); 
+            width: 100%;
+        }
+        .window.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            display: block;
+        }
+
+        /* --- Header Styles --- */
+        .window-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            padding: 16px 0; 
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .back-button {
+            color: var(--on-surface-variant);
+            cursor: pointer;
+            padding: 8px; 
+            transition: color 0.2s ease;
+            user-select: none; 
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-button:hover, .back-button:active {
+            background-color: rgba(128,128,128, 0.1);
+            color: var(--m3-primary);
+        }
+
+        .window-header h2 {
+            flex-grow: 1; 
+            text-align: center; 
+            margin: 0;
+            font-size: 1.25em;
+            font-weight: 600;
+            color: var(--m3-primary);
+        }
+
+        /* --- LIBRARY HEADER --- */
+        .library-header {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            margin-bottom: 10px;
+            position: sticky;
+            top: 0;
+            background-color: var(--background-color);
+            z-index: 50;
+            width: 100%;
+        }
+        
+        /* New Grouping for Title and Tutorial Icon */
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .library-header h1 {
+            font-size: 2em; 
+            margin: 0;
+            color: var(--m3-primary);
+            font-weight: 700;
+            text-align: left;
+            letter-spacing: -0.5px;
+        }
+        
+        .tutorial-icon {
+            color: var(--m3-primary); /* Sets the icon to the Pulse Button Green */
+            padding: 8px;             /* Adds touch area */
+            cursor: pointer;
+            border-radius: 50%;       /* Circular ripple effect */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        
+        .tutorial-icon:active {
+            background-color: rgba(196, 238, 208, 0.1); /* Subtle press effect */
+            transform: scale(0.95);
+        }
+        .tutorial-icon:hover { opacity: 1; }
+        .tutorial-icon:active { transform: scale(0.9); }
+
+        .settings-icon {
+            color: var(--on-surface-variant);
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+            margin-right: -8px; 
+        }
+        .settings-icon:active { background-color: rgba(128,128,128, 0.1); }
+
+        /* --- VIDEO MODAL --- */
+        #video-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); /* Dark dimming */
+            backdrop-filter: blur(5px);
+            z-index: 2100; /* Above settings */
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #video-modal.open { display: flex; opacity: 1; }
+        
+        .video-popup-container {
+            width: 90%;
+            max-width: 500px;
+            background: transparent;
+            position: relative;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .close-video-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* --- SETTINGS MODAL --- */
+        #settings-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--background-color);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            overflow-y: auto;
+        }
+        #settings-modal.open { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background-color: var(--background-color);
+            width: 100%; 
+            min-height: 100%;
+            padding: 20px 32px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .modal-title { 
+            margin: 0; 
+            color: var(--on-surface); 
+            font-size: 1.5em; 
+            font-weight: 700; 
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        .settings-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--m3-primary);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .theme-options { display: flex; flex-direction: column; gap: 8px; }
+        
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--surface-container-high);
+            border-radius: 16px;
+            margin-bottom: 8px;
+        }
+        .setting-label {
+            font-size: 1em;
+            color: var(--on-surface);
+            font-weight: 500;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 32px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #938F99;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #fff;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--m3-primary); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: var(--m3-on-primary); }
+
+        .theme-btn {
+            padding: 16px;
+            border-radius: 28px;
+            background: var(--surface-container-high);
+            border: none; 
+            color: var(--on-surface);
+            font-size: 1em;
+            text-align: left;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 15px;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        .theme-btn.active {
+            background-color: var(--m3-primary); 
+            color: var(--m3-on-primary); 
+            font-weight: 700;
+        }
+
+        /* --- LIBRARY GRID --- */
+        .library-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 40px;
+        }
+
+        .story-card {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg); 
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px; 
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.1s ease, background-color 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden; 
+        }
+        
+        .story-card::after {
+            content: "";
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        .story-card:active::after {
+            width: 300px; height: 300px;
+        }
+        .story-card:active { transform: scale(0.98); }
+
+        .story-shape-icon {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            margin-right: 20px;
+        }
+
+        .color-1 { background-color: var(--shape-color-1); }
+        .color-2 { background-color: var(--shape-color-2); }
+        .color-3 { background-color: var(--shape-color-3); }
+        .color-4 { background-color: var(--shape-color-4); }
+        .color-5 { background-color: var(--shape-color-5); }
+        .color-6 { background-color: var(--shape-color-6); }
+
+        .shape-1 { clip-path: url(#s1); }
+        .shape-2 { clip-path: url(#s2); }
+        .shape-3 { clip-path: url(#s3); }
+        .shape-4 { clip-path: url(#s4); }
+        .shape-5 { clip-path: url(#s5); }
+        .shape-6 { clip-path: url(#s6); }
+        .shape-7 { clip-path: url(#s7); }
+        .shape-8 { clip-path: url(#s8); }
+        .shape-9 { clip-path: url(#s9); }
+        .shape-10 { clip-path: url(#s10); }
+        .shape-11 { clip-path: url(#s11); }
+        .shape-12 { clip-path: url(#s12); }
+        .shape-13 { clip-path: url(#s13); }
+        .shape-14 { clip-path: url(#s14); }
+        .shape-15 { clip-path: url(#s15); }
+
+        .story-info {
+            flex-grow: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .story-card h3 {
+            margin: 0;
+            font-size: 1.1em;
+            text-align: left;
+            color: var(--on-surface);
+            font-weight: 600; 
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+        
+        .delete-card {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--on-surface-variant);
+            border-radius: 50%;
+            transition: background 0.2s, color 0.2s;
+            margin-left: 8px;
+            z-index: 5;
+        }
+        .delete-card:active {
+            background: rgba(128,128,128,0.2);
+            color: var(--incorrect-color);
+        }
+        .delete-card svg { width: 22px; height: 22px; }
+
+        /* --- Lesson View --- */
+        .sentence-display {
+            font-size: 2.2em; 
+            text-align: justify; 
+            margin-bottom: 40px;
+            line-height: 1.8;
+            cursor: default;
+            padding-top: 20px;
+            font-weight: 400;
+        }
+        .sentence-display ruby { margin-right: 0.1em; } 
+        .sentence-display rt { font-size: 0.45em; color: var(--on-surface-variant); user-select: none; }
+        
+        .segment { 
+            position: relative; 
+            cursor: pointer; 
+            border-radius: 6px;
+            padding: 2px 2px;
+            margin: 0 -2px;
+            transition: background-color 0.2s ease, color 0.2s ease; 
+        }
+        .segment.correct { color: var(--correct-color); text-shadow: 0 0 15px rgba(118, 198, 57, 0.3); }
+        .segment.completed { color: var(--completed-color); }
+        .segment.show-tooltip { 
+            background-color: rgba(208, 188, 255, 0.2); 
+            border-bottom: 2px solid var(--m3-primary);
+            border-radius: 4px;
+        }
+        .tooltip {
+            visibility: hidden; position: absolute; 
+            background-color: var(--surface-container-high);
+            border: 1px solid #444;
+            color: var(--on-surface); 
+            text-align: center; border-radius: 8px; padding: 10px 16px;
+            z-index: 10; bottom: 135%; left: 50%; transform: translateX(-50%); 
+            opacity: 0; transition: opacity 0.3s; 
+            font-size: 0.5em; white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .segment.show-tooltip .tooltip { visibility: visible; opacity: 1; }
+
+        /* --- Inputs & Buttons --- */
+        .typing-input {
+            width: 100%; padding: 20px 24px; font-size: 1.25em; 
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(128, 128, 128, 0.1);
+            border-radius: 99px; 
+            box-sizing: border-box; text-align: center;
+            color: var(--on-surface);
+            transition: all 0.2s ease;
+            caret-color: var(--m3-primary);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15); 
+        }
+        .typing-input:focus { 
+            outline: none; border-color: var(--m3-primary);
+            background-color: var(--surface-container);
+        }
+        .typing-input.correct { border-color: var(--correct-color); background-color: rgba(118, 198, 57, 0.1); }
+        .typing-input.incorrect { border-color: var(--incorrect-color); background-color: var(--error-bg); color: var(--incorrect-color); }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-8px); }
+          40% { transform: translateX(8px); }
+          60% { transform: translateX(-8px); }
+          80% { transform: translateX(8px); }
+        }
+        .shake { animation: shake 0.2s ease-in-out; }
+
+        .input-placeholder {
+            width: 80px; 
+            height: 80px;
+            border-radius: 28px; 
+            background-color: var(--m3-primary); 
+            color: var(--m3-on-primary); 
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .input-placeholder:active { transform: scale(0.90); }
+        .input-placeholder svg { width: 36px; height: 36px; fill: currentColor; }
+
+        #json-input-window p { text-align: center; color: var(--on-surface-variant); margin-bottom: 15px; }
+        #json-paste-area {
+            width: 100%; height: 60vh; padding: 15px;
+            border: 1px solid #444; border-radius: 16px;
+            font-family: monospace; font-size: 0.9em; box-sizing: border-box; margin-bottom: 20px;
+            background-color: var(--surface-container-high); color: var(--on-surface);
+            resize: none;
+        }
+        #json-paste-area:focus { outline: 2px solid var(--m3-primary); border-color: transparent; }
+
+        .button-group { display: flex; gap: 12px; padding-bottom: 20px; }
+        
+        .button-group-fixed { 
+            display: flex; 
+            gap: 12px; 
+            width: 100%; 
+        }
+        
+        .button {
+            flex-grow: 1; padding: 16px; font-size: 1em; font-weight: 700;
+            border: none; border-radius: 99px; color: #000; cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .button:active { transform: scale(0.97); }
+        #copy-prompt-btn { background-color: var(--shape-color-2); }
+        #load-story-btn { background-color: var(--m3-primary); color: var(--m3-on-primary); }
+        #repeat-lesson-btn { background-color: var(--shape-color-2); } 
+        #load-new-btn { background-color: var(--m3-primary); color: var(--m3-on-primary); } 
+        .button:disabled { background: #444 !important; color: #888 !important; cursor: not-allowed; opacity: 1; }
+    </style>
+</head>
+<body>
+    
+    <!-- M3 EXPRESSIVE SHAPE DEFINITIONS (14 Smoothed) -->
+    <svg width="0" height="0" style="position: absolute;">
+      <defs>
+        <clipPath id="s1" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy="0.5" r="0.5"/></clipPath>
+        <clipPath id="s2" clipPathUnits="objectBoundingBox"><rect x="0" y="0" width="1" height="1" rx="0.3"/></clipPath>
+        <clipPath id="s3" clipPathUnits="objectBoundingBox"><path d="M0.25,0.05 Q0.95,0.05 0.95,0.05 L0.75,0.95 Q0.05,0.95 0.05,0.95 Z"/></clipPath>
+        <clipPath id="s4" clipPathUnits="objectBoundingBox"><path d="M0,1 L0,0.5 A0.5,0.5 0 0,1 1,0.5 L1,1 Z"/></clipPath>
+        <clipPath id="s5" clipPathUnits="objectBoundingBox"><path d="M0,0.5 A0.5,0.5 0 0,1 1,0.5 L1,1 L0,1 Z"/></clipPath>
+        <clipPath id="s6" clipPathUnits="objectBoundingBox"><ellipse cx="0.5" cy="0.5" rx="0.4" ry="0.5" transform="rotate(20, 0.5, 0.5)"/></clipPath>
+        <clipPath id="s7" clipPathUnits="objectBoundingBox"><rect x="0.15" y="0.05" width="0.7" height="0.9" rx="0.35" transform="rotate(-15, 0.5, 0.5)"/></clipPath>
+        <clipPath id="s8" clipPathUnits="objectBoundingBox"><path d="M0.5,0.05 Q0.55,0.05 0.58,0.1 L0.92,0.85 Q0.95,0.95 0.85,0.95 L0.15,0.95 Q0.05,0.95 0.08,0.85 L0.42,0.1 Q0.45,0.05 0.5,0.05 Z"/></clipPath>
+        <clipPath id="s9" clipPathUnits="objectBoundingBox"><path d="M0.5,0.05 Q0.55,0.05 0.58,0.1 L0.95,0.6 Q1,0.65 0.9,0.7 L0.8,0.7 L0.8,0.9 Q0.8,1 0.7,1 L0.3,1 Q0.2,1 0.2,0.9 L0.2,0.7 L0.1,0.7 Q0,0.65 0.05,0.6 L0.42,0.1 Q0.45,0.05 0.5,0.05 Z"/></clipPath>
+        <clipPath id="s10" clipPathUnits="objectBoundingBox"><path d="M0,0 L1,0 A1,1 0 0,1 1,1 L1,1 L0,1 Z"/></clipPath>
+        <clipPath id="s11" clipPathUnits="objectBoundingBox"><rect x="0.15" y="0.15" width="0.7" height="0.7" rx="0.15" transform="rotate(45, 0.5, 0.5)"/></clipPath>
+        <clipPath id="s12" clipPathUnits="objectBoundingBox"><path d="M0.2,0.1 L0.8,0.1 Q0.95,0.1 1,0.3 L1,0.7 Q0.95,0.9 0.8,0.9 L0.2,0.9 Q0.05,0.9 0,0.7 L0,0.3 Q0.05,0.1 0.2,0.1 Z"/></clipPath>
+        <clipPath id="s13" clipPathUnits="objectBoundingBox"><path d="M0.5,0.05 Q0.55,0.05 0.6,0.1 L0.95,0.35 Q1,0.4 0.95,0.5 L0.8,0.9 Q0.75,1 0.65,1 L0.35,1 Q0.25,1 0.2,0.9 L0.05,0.5 Q0,0.4 0.05,0.35 L0.4,0.1 Q0.45,0.05 0.5,0.05 Z"/></clipPath>
+        <clipPath id="s14" clipPathUnits="objectBoundingBox"><path d="M0.3,0.05 L0.7,0.05 Q0.8,0.05 0.85,0.15 L0.95,0.4 Q1,0.5 0.95,0.6 L0.55,0.95 Q0.5,1 0.45,0.95 L0.05,0.6 Q0,0.5 0.05,0.4 L0.15,0.15 Q0.2,0.05 0.3,0.05 Z"/></clipPath>
+      </defs>
+    </svg>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="back-button" id="close-settings-btn">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M15.41,16.59L10.83,12l4.58-4.59L14,6l-6,6l6,6L15.41,16.59z"/></svg>
+                </span>
+                <h3 class="modal-title">Settings</h3>
+            </div>
+            <div class="settings-section">
+                <h4>Appearance</h4>
+                <div class="theme-options">
+                    <button class="theme-btn" onclick="setTheme('light')">Light Theme</button>
+                    <button class="theme-btn" onclick="setTheme('dark')">Dark Theme</button>
+                    <button class="theme-btn" onclick="setTheme('system')">System Default</button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h4>Sound & Feel</h4>
+                <div class="setting-row">
+                    <span class="setting-label">Haptic Feedback</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="haptic-toggle" onchange="toggleSetting('haptics')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Lesson Speech (TTS)</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="tts-toggle" onchange="toggleSetting('tts')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO MODAL -->
+    <div id="video-modal">
+        <div class="video-popup-container">
+             <button class="close-video-btn" id="close-video-btn">✕</button>
+             <!-- Streamable Embed -->
+             <div style="position:relative; width:100%; height:0px; padding-bottom:100.000%">
+                <iframe id="tutorial-iframe" allow="fullscreen;autoplay" allowfullscreen height="100%" src="" width="100%" style="border:none; width:100%; height:100%; position:absolute; left:0px; top:0px; overflow:hidden;"></iframe>
+             </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div class="content-wrapper">
+            <div class="window active" id="library-window">
+                <div class="library-header">
+                    <div class="header-title-group">
+                        <h1>Yaru Learning</h1>
+                        <div class="tutorial-icon" id="open-tutorial-btn">
+                            <!-- Play Circle Rounded Icon -->
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM10 16.5v-9l6 4.5-6 4.5z"/></svg>
+                        </div>
+                    </div>
+                    <div class="settings-icon" id="open-settings-btn">
+                        <!-- M3 Expressive Rounded/Menu Bar Icon -->
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M4 18q-.425 0-.712-.288Q3 17.425 3 17t.288-.712Q3.575 16 4 16h16q.425 0 .712.288Q21 16.575 21 17t-.288.712Q20.425 18 20 18Zm0-5q-.425 0-.712-.288Q3 12.425 3 12t.288-.712Q3.575 11 4 11h16q.425 0 .712.288Q21 11.575 21 12t-.288.712Q20.425 13 20 13Zm0-5q-.425 0-.712-.288Q3 7.425 3 7t.288-.712Q3.575 6 4 6h16q.425 0 .712.288Q21 6.575 21 7t-.288.712Q20.425 8 20 8Z"/></svg>
+                    </div>
+                </div>
+                
+                <div id="library-grid" class="library-grid"></div>
+                <div id="empty-library-msg" style="text-align: center; color: var(--on-surface-variant); margin-top: 60px; display: none;">No lessons yet.<br>Tap the + button to add one!</div>
+            </div>
+
+            <div class="window" id="lesson-window">
+                <div class="window-header" id="lesson-header">
+                    <span class="back-button" id="back-from-lesson-btn">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M15.41,16.59L10.83,12l4.58-4.59L14,6l-6,6l6,6L15.41,16.59z"/></svg>
+                    </span>
+                    <h2 id="current-lesson-title">Yaru Learning</h2> 
+                    <span style="width: 48px; visibility: hidden;"></span> 
+                </div>
+                <div id="sentence-container" class="sentence-display"></div>
+            </div>
+
+            <div class="window" id="json-input-window">
+                <div class="window-header">
+                    <span class="back-button" id="back-from-json-btn">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M15.41,16.59L10.83,12l4.58-4.59L14,6l-6,6l6,6L15.41,16.59z"/></svg>
+                    </span>
+                    <h2>Add Lesson</h2>
+                    <span style="width: 48px; visibility: hidden;"></span> 
+                </div>
+                <p>Generate a lesson with AI, then paste</p>
+                <textarea id="json-paste-area" placeholder="Paste JSON here..."></textarea>
+                <div class="button-group">
+                    <button id="copy-prompt-btn" class="button">Copy Prompt</button>
+                    <button id="load-story-btn" class="button" disabled>Save & Play</button>
+                </div>
+            </div>
+        </div> 
+    </div> 
+        
+    <div class="fixed-input-bar">
+        <input type="text" id="user-input" class="typing-input" placeholder="ここにひらがなで入力" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="display: none;">
+        
+        <div id="control-buttons" class="button-group-fixed" style="display: none;">
+            <button id="repeat-lesson-btn" class="button">Repeat</button>
+            <button id="load-new-btn" class="button">Home</button>
+        </div>
+        
+        <button id="main-load-btn" class="input-placeholder" style="display: block;">
+            <svg viewBox="0 0 24 24"><path d="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"/></svg>
+        </button>
+    </div>
+
+    <script>
+    const userSettings = { theme: 'system', haptics: true, tts: true };
+
+    function loadSettings() {
+        const stored = localStorage.getItem('yaruSettings');
+        if (stored) Object.assign(userSettings, JSON.parse(stored));
+        applyTheme(userSettings.theme);
+        updateActiveBtn(userSettings.theme);
+        document.getElementById('haptic-toggle').checked = userSettings.haptics;
+        document.getElementById('tts-toggle').checked = userSettings.tts;
+    }
+
+    function saveSettings() { localStorage.setItem('yaruSettings', JSON.stringify(userSettings)); }
+    function toggleSetting(key) { userSettings[key] = !userSettings[key]; saveSettings(); }
+
+    function applyTheme(theme) {
+        if (theme === 'system') {
+            document.body.removeAttribute('data-theme');
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) document.body.setAttribute('data-theme', 'light');
+        } else {
+            document.body.setAttribute('data-theme', theme);
+        }
+    }
+
+    function setTheme(theme) {
+        userSettings.theme = theme;
+        saveSettings();
+        applyTheme(theme);
+        updateActiveBtn(theme);
+    }
+
+    function updateActiveBtn(theme) {
+        document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+        const index = theme === 'light' ? 0 : theme === 'dark' ? 1 : 2;
+        document.querySelectorAll('.theme-btn')[index].classList.add('active');
+    }
+
+    const settingsModal = document.getElementById('settings-modal');
+    function openSettings() { settingsModal.classList.add('open'); }
+    function closeSettings() { settingsModal.classList.remove('open'); }
+    
+    document.getElementById('open-settings-btn').addEventListener('click', openSettings);
+    document.getElementById('close-settings-btn').addEventListener('click', closeSettings);
+
+    // --- VIDEO TUTORIAL LOGIC ---
+    const videoModal = document.getElementById('video-modal');
+    const tutorialIframe = document.getElementById('tutorial-iframe');
+    const tutorialUrl = "https://streamable.com/e/67kj6c?autoplay=1";
+    
+    document.getElementById('open-tutorial-btn').addEventListener('click', () => {
+        // Set the src only when opening to ensuring autoplay works and it doesn't load in background
+        tutorialIframe.src = tutorialUrl;
+        videoModal.classList.add('open');
+    });
+    
+    document.getElementById('close-video-btn').addEventListener('click', () => {
+        videoModal.classList.remove('open');
+        // Clear src to stop video/audio
+        setTimeout(() => { tutorialIframe.src = ""; }, 300); 
+    });
+    
+    // Close video modal if clicking outside the video container
+    videoModal.addEventListener('click', (e) => {
+        if (e.target === videoModal) {
+            videoModal.classList.remove('open');
+            setTimeout(() => { tutorialIframe.src = ""; }, 300);
+        }
+    });
+
+    if ('serviceWorker' in navigator) {
+        const swCode = `const CACHE_NAME='yaru-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(['./','index.html'])));});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
+        const blob = new Blob([swCode], {type: 'text/javascript'});
+        navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.error);
+    }
+
+    const synth = window.speechSynthesis;
+    let japaneseVoice = null;
+    let spokenSegments = new Set();   
+    let speechToken = 0;             
+    let isComposing = false; // Track IME Composition state
+
+    function hapticFeedback(pattern = [40]) { if (userSettings.haptics && navigator.vibrate) navigator.vibrate(pattern); }
+
+    function populateVoiceList() {
+        if (japaneseVoice) return;
+        const voices = synth.getVoices();
+        japaneseVoice = voices.find(voice => voice.lang === 'ja-JP' && (voice.name.includes('Google') || voice.name.includes('Kyoko')));
+        if (!japaneseVoice) japaneseVoice = voices.find(voice => voice.lang.startsWith('ja'));
+    }
+    if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoiceList;
+
+    function isOnlyPunctuation(text) { return /^[\u3000-\u303F、。？！ー]*$/.test(text); }
+    function adjustParticlePronunciation(segment) {
+        if (!segment.isKanji && segment.surface && segment.surface.length === 1) {
+            if (segment.surface === "は") return "わ";
+            if (segment.surface === "へ") return "え";
+            if (segment.surface === "を") return "お";
+        }
+        return segment.furigana || segment.surface || '';
+    }
+
+    function speakSegment(segment) {
+        if (!userSettings.tts || !synth || !japaneseVoice) return;
+        const furigana = segment.furigana || segment.surface || '';
+        if (isOnlyPunctuation(furigana)) return;
+
+        speechToken++;
+        const thisToken = speechToken;
+        synth.cancel();
+
+        const jp = new SpeechSynthesisUtterance(adjustParticlePronunciation(segment));
+        jp.voice = japaneseVoice;
+        jp.lang = 'ja-JP';
+        
+        jp.onend = () => {
+            if (thisToken !== speechToken || !segment.meaning) return;
+            setTimeout(() => {
+                if (thisToken !== speechToken) return;
+                const en = new SpeechSynthesisUtterance(segment.meaning);
+                const enVoice = synth.getVoices().find(v => v.lang.startsWith('en'));
+                if (enVoice) en.voice = enVoice;
+                en.lang = 'en-GB';
+                en.rate = 0.9; 
+                synth.speak(en);
+            }, 120);
+        };
+        synth.speak(jp);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSettings(); 
+
+        const libraryWindow = document.getElementById('library-window');
+        const lessonWindow = document.getElementById('lesson-window');
+        const jsonInputWindow = document.getElementById('json-input-window');
+        const libraryGrid = document.getElementById('library-grid');
+        const emptyLibraryMsg = document.getElementById('empty-library-msg');
+        const fixedInputBar = document.querySelector('.fixed-input-bar'); 
+        const userInputEl = document.getElementById('user-input');
+        const mainLoadBtn = document.getElementById('main-load-btn');
+        const controlButtons = document.getElementById('control-buttons');
+        const sentenceContainerEl = document.getElementById('sentence-container');
+        const lessonHeaderTitle = document.getElementById('current-lesson-title');
+        const jsonPasteArea = document.getElementById('json-paste-area');
+        const loadStoryBtn = document.getElementById('load-story-btn');
+        
+        let libraryData = []; 
+        let currentLessonData = null; 
+        let currentSentenceIndex = 0; 
+        let sentenceBlocks = [];
+
+        // --- Composition Event Listeners for IME Support ---
+        userInputEl.addEventListener('compositionstart', () => { isComposing = true; });
+        userInputEl.addEventListener('compositionend', (e) => { 
+            isComposing = false; 
+            handleTyping(e); // Re-check immediately when composition ends
+        });
+
+        function loadLibraryFromStorage() {
+            const stored = localStorage.getItem('yaruLibrary');
+            if (stored) {
+                try { libraryData = JSON.parse(stored); } catch(e) { libraryData = []; }
+            } else { libraryData = []; }
+            renderLibrary();
+        }
+
+        function saveLibraryToStorage() { localStorage.setItem('yaruLibrary', JSON.stringify(libraryData)); }
+
+        function addToLibrary(lessonObj) {
+            lessonObj.id = Date.now().toString();
+            // Sequential Loop for shapes (1-14)
+            const shapeIndex = (libraryData.length % 14) + 1;
+            lessonObj.shape = `shape-${shapeIndex}`;
+            
+            // Sequential Loop for colors (1-6)
+            const colorIndex = (libraryData.length % 6) + 1;
+            lessonObj.colorVariant = `color-${colorIndex}`;
+
+            libraryData.unshift(lessonObj); 
+            saveLibraryToStorage();
+            renderLibrary();
+            return lessonObj;
+        }
+        
+        function deleteFromLibrary(e, id) {
+            e.stopPropagation();
+            if(confirm('Delete this lesson?')) {
+                libraryData = libraryData.filter(l => l.id !== id);
+                saveLibraryToStorage();
+                renderLibrary();
+            }
+        }
+
+        function renderLibrary() {
+            libraryGrid.innerHTML = '';
+            if (libraryData.length === 0) {
+                emptyLibraryMsg.style.display = 'block';
+            } else {
+                emptyLibraryMsg.style.display = 'none';
+                libraryData.forEach(lesson => {
+                    const card = document.createElement('div');
+                    card.className = 'story-card'; 
+                    card.addEventListener('click', () => { navigateTo('lesson'); openLesson(lesson); });
+                    const shapeIcon = document.createElement('div');
+                    const colorClass = lesson.colorVariant || 'color-1';
+                    shapeIcon.className = `story-shape-icon ${lesson.shape || 'shape-1'} ${colorClass}`;
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'story-info';
+                    infoDiv.innerHTML = `<h3>${lesson.lessonTitle || 'Untitled Lesson'}</h3>`;
+                    const delBtn = document.createElement('div');
+                    delBtn.className = 'delete-card';
+                    // Updated to Bin/Trash Icon
+                    delBtn.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M6,19c0,1.1,0.9,2,2,2h8c1.1,0,2-0.9,2-2V7H6V19z M19,4h-3.5l-1-1h-5l-1,1H5v2h14V4z"/></svg>';
+                    delBtn.onclick = (e) => { e.stopPropagation(); deleteFromLibrary(e, lesson.id); };
+                    card.appendChild(shapeIcon); card.appendChild(infoDiv); card.appendChild(delBtn);
+                    libraryGrid.appendChild(card);
+                });
+            }
+        }
+
+        function openLesson(lessonData) {
+            currentLessonData = lessonData;
+            sentenceBlocks = lessonData.contentBlocks.filter(block => block.type === 'sentence');
+            currentSentenceIndex = 0;
+            renderLessonContent(lessonData, 0);
+            setupNextSentence();
+        }
+
+        function renderLessonContent(lessonData, startIndex) {
+            lessonHeaderTitle.textContent = lessonData.lessonTitle || 'Yaru Learning';
+            sentenceContainerEl.innerHTML = ''; 
+            lessonData.contentBlocks.filter(block => block.type === 'sentence').forEach((block, blockIndex) => {
+                const sentenceDiv = document.createElement('div');
+                sentenceDiv.classList.add('full-sentence'); 
+                block.segments.forEach((segment, i) => {
+                    const segmentSpan = document.createElement('span');
+                    segmentSpan.classList.add('segment');
+                    segmentSpan.dataset.segId = `${blockIndex}_${i}`;
+                    const trailingSpace = (segment.surface.match(/[、。？！]/)) ? '' : ' ';
+                    if (segment.isKanji) {
+                        segmentSpan.innerHTML = `<ruby>${segment.surface}<rt>${segment.furigana}</rt></ruby>${trailingSpace}<span class="tooltip">${segment.meaning}</span>`;
+                    } else {
+                        segmentSpan.innerHTML = `${segment.surface}${trailingSpace}<span class="tooltip">${segment.meaning}</span>`;
+                    }
+                    segmentSpan.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const isAlreadyShowing = this.classList.contains('show-tooltip');
+                        document.querySelectorAll('.segment').forEach(s => s.classList.remove('show-tooltip'));
+                        if (!isAlreadyShowing) this.classList.add('show-tooltip');
+                    });
+                    sentenceDiv.appendChild(segmentSpan);
+                });
+                sentenceContainerEl.appendChild(sentenceDiv);
+            });
+        }
+
+        function setupNextSentence() {
+            if (currentSentenceIndex >= sentenceBlocks.length) {
+                userInputEl.style.display = 'none';
+                controlButtons.style.display = 'flex';
+                mainLoadBtn.style.display = 'none';
+                return;
+            }
+            spokenSegments.clear();
+            const currentBlock = sentenceBlocks[currentSentenceIndex];
+            const targetHiragana = currentBlock.segments.map(s => s.furigana).join('');
+            userInputEl.value = '';
+            userInputEl.classList.remove('correct', 'incorrect');
+            userInputEl.setAttribute('data-target', targetHiragana);
+            userInputEl.disabled = false;
+            userInputEl.placeholder = 'ここにひらがなで入力';
+            userInputEl.style.display = 'block';
+            controlButtons.style.display = 'none';
+            mainLoadBtn.style.display = 'none';
+            setTimeout(() => userInputEl.focus(), 100);
+        }
+
+        function handleTyping(event) {
+            const typedText = event.target.value;
+            const targetHiragana = event.target.getAttribute('data-target');
+            if (!targetHiragana) return;
+            
+            const currentSentenceDiv = sentenceContainerEl.querySelectorAll('.full-sentence')[currentSentenceIndex];
+            if (!currentSentenceDiv) return;
+            const currentSegments = currentSentenceDiv.querySelectorAll('.segment');
+            
+            userInputEl.classList.remove('correct', 'incorrect');
+            
+            // Normalize inputs to NFD to separate Dakota/Handakuten (e.g., 'が' -> 'か' + '゛')
+            // This allows 'か' to be a valid prefix of 'が' without triggering error.
+            const normTyped = typedText.normalize('NFD');
+            const normTarget = targetHiragana.normalize('NFD');
+            
+            const currentBlock = sentenceBlocks[currentSentenceIndex];
+            let tempLength = 0;
+            
+            for (let i = 0; i < currentBlock.segments.length; i++) {
+                const segmentData = currentBlock.segments[i];
+                const segEl = currentSegments[i];
+                const segStart = tempLength;
+                tempLength += segmentData.furigana.length;
+                const segEnd = tempLength;
+                const segId = segEl.dataset.segId;
+                
+                // Visual Check: Separate distinct words
+                if (typedText.length >= segEnd) {
+                    const typedSegment = typedText.substring(segStart, segEnd);
+                    // Strictly check if the characters match for completion
+                    if (typedSegment === segmentData.furigana) {
+                        segEl.classList.remove('correct');
+                        segEl.classList.add('completed');
+                        if (!spokenSegments.has(segId) && !isOnlyPunctuation(segmentData.furigana)) {
+                            spokenSegments.add(segId);
+                            speakSegment(segmentData); 
+                        }
+                    } else {
+                        // Length met, but char differs (e.g. 'か' for 'が'). Keep as 'correct' (green) not completed.
+                        segEl.classList.remove('completed');
+                        segEl.classList.add('correct');
+                    }
+                } else if (typedText.length > segStart && typedText.length < segEnd) {
+                    segEl.classList.add('correct');
+                } else {
+                    segEl.classList.remove('correct');
+                }
+            }
+            
+            if (typedText === targetHiragana) {
+                if (synth.speaking) synth.cancel();
+                hapticFeedback([15, 30]); 
+                currentSegments.forEach(seg => {
+                    seg.classList.remove('correct');
+                    seg.classList.add('completed');
+                    spokenSegments.add(seg.dataset.segId);
+                });
+                currentSentenceIndex++;
+                setupNextSentence();
+            } else {
+                // Lenient Prefix matching using Normalization
+                if (normTarget.startsWith(normTyped)) {
+                    if (typedText.length > 0) userInputEl.classList.add('correct');
+                } else {
+                    // Mismatch detected. 
+                    // ONLY trigger error if user is NOT strictly composing (typing temporary chars).
+                    if (!isComposing) {
+                        userInputEl.classList.add('incorrect');
+                        userInputEl.classList.add('shake');
+                        hapticFeedback([50, 30, 50]); 
+                        setTimeout(() => userInputEl.classList.remove('shake'), 400);
+                    }
+                }
+            }
+        }
+
+        function renderView(windowId) {
+            libraryWindow.classList.remove('active');
+            lessonWindow.classList.remove('active');
+            jsonInputWindow.classList.remove('active');
+            controlButtons.style.display = 'none';
+            userInputEl.style.display = 'none';
+            mainLoadBtn.style.display = 'none';
+            fixedInputBar.style.display = 'flex';
+            if (windowId === 'library') {
+                libraryWindow.classList.add('active');
+                mainLoadBtn.style.display = 'block';
+            } else if (windowId === 'lesson') {
+                lessonWindow.classList.add('active');
+                userInputEl.style.display = 'block';
+            } else if (windowId === 'json') {
+                jsonInputWindow.classList.add('active');
+                fixedInputBar.style.display = 'none'; 
+            }
+        }
+
+        function navigateTo(windowId) {
+            history.pushState({ windowId: windowId }, '', '');
+            renderView(windowId);
+        }
+
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.windowId) {
+                renderView(event.state.windowId);
+            } else {
+                renderView('library');
+            }
+        });
+
+        history.replaceState({ windowId: 'library' }, '', '');
+
+        mainLoadBtn.addEventListener('click', () => navigateTo('json'));
+        document.getElementById('back-from-lesson-btn').addEventListener('click', () => history.back());
+        document.getElementById('back-from-json-btn').addEventListener('click', () => history.back());
+        document.getElementById('load-new-btn').addEventListener('click', () => history.back());
+        
+        document.getElementById('repeat-lesson-btn').addEventListener('click', () => {
+             currentSentenceIndex = 0;
+             renderLessonContent(currentLessonData, 0);
+             setupNextSentence();
+        });
+
+        document.getElementById('copy-prompt-btn').addEventListener('click', () => {
+             const fullPrompt = `Generate a JSON object for a short Japanese lesson. The lesson should contain one or more sentences.
+
+Follow this JSON structure EXACTLY:
+
+{
+  "lessonTitle": "A creative title for the lesson",
+  "contentBlocks": [
+    {
+      "type": "sentence",
+      "id": "s1",
+      "segments": [
+        {
+          "surface": "The Japanese word or particle (e.g., '私' or 'は')",
+          "furigana": "The hiragana reading (e.g., 'わたし' or 'は')",
+          "romaji": "The romaji reading (e.g., 'watashi' or 'wa')",
+          "meaning": "The English meaning",
+          "isKanji": true
+        }
+      ]
+    }
+  ]
+}
+Separate punctuation into own segments. Return only JSON.`;
+             navigator.clipboard.writeText(fullPrompt).then(() => {
+                const btn = document.getElementById('copy-prompt-btn');
+                btn.textContent = 'Copied!';
+                btn.style.backgroundColor = 'var(--correct-color)';
+                setTimeout(() => { btn.textContent = 'Copy Prompt'; btn.style.backgroundColor = ''; }, 2000);
+             });
+        });
+
+        jsonPasteArea.addEventListener('input', () => {
+            loadStoryBtn.disabled = (jsonPasteArea.value.trim().length === 0);
+        });
+
+        loadStoryBtn.addEventListener('click', () => {
+            const jsonText = jsonPasteArea.value;
+            try {
+                const parsedJson = JSON.parse(jsonText);
+                if (parsedJson.contentBlocks) {
+                    const newLesson = addToLibrary(parsedJson);
+                    jsonPasteArea.value = '';
+                    loadStoryBtn.disabled = true;
+                    navigateTo('lesson');
+                    openLesson(newLesson);
+                } else {
+                    alert('Invalid JSON: Missing contentBlocks');
+                }
+            } catch (error) {
+                alert('Invalid JSON format');
+            }
+        });
+
+        userInputEl.addEventListener('input', handleTyping);
+        populateVoiceList();
+        loadLibraryFromStorage();
+        renderView('library'); 
+    });
+    </script>
+</body>
+</html>
