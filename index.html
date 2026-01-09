@@ -11,6 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Yaru Learning">
     <title>Yaru Learning by Shafiullah</title>
+    <!-- Duplicate meta tags for ensuring PWA compatibility across devices -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
@@ -19,24 +20,23 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Yaru Learning">
     <style>
-        /* --- Material 3 & Custom Theme Variables --- */
+        /* --- CSS Variables & Theming --- */
         :root {
-            /* --- DEFAULT (DARK MODE) --- */
-            /* UPDATED: Background matches Story Card Color (#2f3f14) */
-            --background-color: #2f3f14; 
-            --surface-container: #1e2216; 
-            --surface-container-high: #2f3f14; 
-            --on-surface: #e4e7d9;
-            --on-surface-variant: #8a936f; 
+            /* Default Dark Theme Colors */
+            --background-color: #1f2616;
+            --surface-container: #232b18;
+            --surface-container-high: #2b351e;
+            --on-surface: #e7ebdd;
+            --on-surface-variant: #a0a88a;
             
-            /* UPDATED: M3 Expressive Green */
-            --m3-primary: #b6f06d;      /* Action/Button Color */
-            --m3-on-primary: #203600;   /* Text on Button */
+            /* Material 3 Key Colors */
+            --m3-primary: #b6f06d;
+            --m3-on-primary: #203600;
             --m3-primary-container: #2f3f14;
             
             --glass-bg: rgba(18, 20, 12, 0.85);
 
-            /* Shape Colors */
+            /* Shape/Icon Colors */
             --shape-color-1: #D0BCFF; 
             --shape-color-2: #F2B8B5; 
             --shape-color-3: #6DD58C; 
@@ -44,32 +44,31 @@
             --shape-color-5: #FFD966; 
             --shape-color-6: #EDB9F6; 
 
+            /* Feedback Colors */
             --correct-color: #b6f06d;    
             --completed-color: #49454f; 
             --incorrect-color: #ffb4ab;  
             --error-bg: #410e0b;
             
             --card-border: rgba(138, 147, 111, 0.3); 
-            --card-bg: rgba(0, 0, 0, 0.25);       
+            --card-bg: rgba(255, 255, 255, 0.05);
 
             --radius-full: 999px;
             --radius-card: 28px; 
         }
 
-        /* --- LIGHT THEME OVERRIDES --- */
+        /* Light Theme Overrides */
         [data-theme="light"] {
-            /* UPDATED: Background matches Story Card Color (#d2ff9a) */
-            --background-color: #d2ff9a;
-            --surface-container: #eff5e5;
-            --surface-container-high: #e1e8d5;
+            --background-color: #f4f7ef;
+            --surface-container: #ffffff;
+            --surface-container-high: #eef2e6;
             --on-surface: #1b1f14;
-            --on-surface-variant: #5b6050;
+            --on-surface-variant: #6b705f;
             
             --m3-primary: #b6f06d;       
             --m3-on-primary: #1b2a00;    
             --m3-primary-container: #d2ff9a;
 
-            /* Pure White for Input Bar as requested */
             --glass-bg: rgba(255, 255, 255, 0.95);
 
             --shape-color-1: #9A82DB; 
@@ -85,15 +84,15 @@
             --error-bg: #FFDAD6;
             
             --card-border: rgba(123, 139, 102, 0.3); 
-            --card-bg: rgba(255, 255, 255, 0.85);  
+            --card-bg: rgba(255, 255, 255, 0.96);
         }
         
-        /* Overrides for Header Elements to match Plus Button Color (#b6f06d) in both modes */
         [data-theme="light"] .window-header h2,
         [data-theme="light"] .settings-section h4 {
             color: #2f3f14; 
         }
 
+        /* --- Global Layout --- */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
@@ -131,6 +130,7 @@
             box-sizing: border-box;
         }
 
+        /* --- Floating Input Bar --- */
         .fixed-input-bar {
             position: fixed; 
             bottom: 30px; 
@@ -154,6 +154,7 @@
             pointer-events: auto; 
         }
 
+        /* --- View/Window Switching Logic --- */
         .window {
             display: none;
             opacity: 0;
@@ -206,7 +207,7 @@
             color: var(--m3-primary);
         }
 
-        /* --- LIBRARY HEADER --- */
+        /* --- Library Header Styles --- */
         .library-header {
             display: flex;
             justify-content: space-between; 
@@ -222,7 +223,6 @@
             transition: background-color 0.3s ease;
         }
         
-        /* UPDATED: Header Title Group highlighted like Plus Button */
         .header-title-group {
             display: flex;
             align-items: center;
@@ -235,16 +235,16 @@
         }
 
         .library-header h1 {
-            font-size: 1.5em; /* Adjusted to fit in the pill */
+            font-size: 1.5em;
             margin: 0;
-            color: inherit !important; /* Inherit from container */
+            color: inherit !important;
             font-weight: 700;
             text-align: left;
             letter-spacing: -0.5px;
         }
         
         .tutorial-icon {
-            color: inherit !important; /* Inherit from container */
+            color: inherit !important;
             padding: 4px;             
             cursor: pointer;
             border-radius: 50%;      
@@ -274,6 +274,7 @@
         }
         .settings-icon:active { background-color: rgba(128,128,128, 0.1); }
 
+        /* --- Video & Settings Modals --- */
         #video-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -422,6 +423,7 @@
             font-weight: 700;
         }
 
+        /* --- Story/Library Cards --- */
         .library-grid {
             display: flex;
             flex-direction: column;
@@ -433,7 +435,7 @@
             display: flex;
             align-items: center;
             background-color: var(--card-bg); 
-            border: none;                         /* <--- CHANGE TO THIS */
+            border: none;
             border-radius: 20px;
             padding: 20px; 
             cursor: pointer;
@@ -466,6 +468,7 @@
             margin-right: 20px;
         }
 
+        /* Color & Shape Classes */
         .color-1 { background-color: var(--shape-color-1); }
         .color-2 { background-color: var(--shape-color-2); }
         .color-3 { background-color: var(--shape-color-3); }
@@ -510,7 +513,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* NEW: Date/Time style */
         .story-date {
             margin: 4px 0 0 0;
             font-size: 0.8em;
@@ -536,6 +538,7 @@
         }
         .delete-card svg { width: 22px; height: 22px; }
 
+        /* --- Lesson Sentence & Segments --- */
         .sentence-display {
             font-size: 2.2em; 
             text-align: justify; 
@@ -576,6 +579,7 @@
         }
         .segment.show-tooltip .tooltip { visibility: visible; opacity: 1; }
 
+        /* --- Typing Input Styles --- */
         .typing-input {
             width: 100%; padding: 20px 24px; font-size: 1.25em; 
             background-color: var(--glass-bg);
@@ -622,6 +626,7 @@
         .input-placeholder:active { transform: scale(0.90); }
         .input-placeholder svg { width: 36px; height: 36px; fill: currentColor; }
 
+        /* --- JSON Import Styles --- */
         #json-input-window p { text-align: center; color: var(--on-surface-variant); margin-bottom: 15px; }
         #json-paste-area {
             width: 100%; height: 60vh; padding: 15px;
@@ -656,7 +661,7 @@
 </head>
 <body>
     
-    <!-- M3 EXPRESSIVE SHAPE DEFINITIONS (14 Smoothed) -->
+    <!-- SVG ClipPaths used for Story Card Icons -->
     <svg width="0" height="0" style="position: absolute;">
       <defs>
         <clipPath id="s1" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy="0.5" r="0.5"/></clipPath>
@@ -676,7 +681,7 @@
       </defs>
     </svg>
 
-    <!-- SETTINGS MODAL -->
+    <!-- Settings Modal -->
     <div id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -713,30 +718,29 @@
         </div>
     </div>
 
-    <!-- VIDEO MODAL -->
+    <!-- Video Modal -->
     <div id="video-modal">
         <div class="video-popup-container">
              <button class="close-video-btn" id="close-video-btn">✕</button>
-             <!-- Streamable Embed -->
              <div style="position:relative; width:100%; height:0px; padding-bottom:100.000%">
                 <iframe id="tutorial-iframe" allow="fullscreen;autoplay" allowfullscreen height="100%" src="" width="100%" style="border:none; width:100%; height:100%; position:absolute; left:0px; top:0px; overflow:hidden;"></iframe>
              </div>
         </div>
     </div>
 
+    <!-- Main App Container -->
     <div class="app-container">
         <div class="content-wrapper">
+            <!-- Window 1: Library (Home) -->
             <div class="window active" id="library-window">
                 <div class="library-header">
                     <div class="header-title-group">
                         <h1>Yaru Learning</h1>
                         <div class="tutorial-icon" id="open-tutorial-btn">
-                            <!-- Play Circle Rounded Icon -->
                             <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM10 16.5v-9l6 4.5-6 4.5z"/></svg>
                         </div>
                     </div>
                     <div class="settings-icon" id="open-settings-btn">
-                        <!-- M3 Expressive Rounded/Menu Bar Icon -->
                         <svg class="icon" viewBox="0 0 24 24"><path d="M4 18q-.425 0-.712-.288Q3 17.425 3 17t.288-.712Q3.575 16 4 16h16q.425 0 .712.288Q21 16.575 21 17t-.288.712Q20.425 18 20 18Zm0-5q-.425 0-.712-.288Q3 12.425 3 12t.288-.712Q3.575 11 4 11h16q.425 0 .712.288Q21 11.575 21 12t-.288.712Q20.425 13 20 13Zm0-5q-.425 0-.712-.288Q3 7.425 3 7t.288-.712Q3.575 6 4 6h16q.425 0 .712.288Q21 6.575 21 7t-.288.712Q20.425 8 20 8Z"/></svg>
                     </div>
                 </div>
@@ -745,6 +749,7 @@
                 <div id="empty-library-msg" style="text-align: center; color: var(--on-surface-variant); margin-top: 60px; display: none;">No lessons yet.<br>Tap the + button to add one!</div>
             </div>
 
+            <!-- Window 2: Lesson Interface -->
             <div class="window" id="lesson-window">
                 <div class="window-header" id="lesson-header">
                     <span class="back-button" id="back-from-lesson-btn">
@@ -756,6 +761,7 @@
                 <div id="sentence-container" class="sentence-display"></div>
             </div>
 
+            <!-- Window 3: JSON Import -->
             <div class="window" id="json-input-window">
                 <div class="window-header">
                     <span class="back-button" id="back-from-json-btn">
@@ -774,6 +780,7 @@
         </div> 
     </div> 
         
+    <!-- Fixed Bottom Bar for Input & Controls -->
     <div class="fixed-input-bar">
         <input type="text" id="user-input" class="typing-input" placeholder="ここにひらがなで入力" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="display: none;">
         
@@ -788,8 +795,10 @@
     </div>
 
     <script>
+    // --- Configuration & State ---
     const userSettings = { theme: 'system', haptics: true, tts: true };
 
+    // --- Theme Management ---
     function loadSettings() {
         const stored = localStorage.getItem('yaruSettings');
         if (stored) Object.assign(userSettings, JSON.parse(stored));
@@ -824,31 +833,35 @@
         document.querySelectorAll('.theme-btn')[index].classList.add('active');
     }
 
+    // --- Settings Modal Logic ---
     const settingsModal = document.getElementById('settings-modal');
-    function openSettings() { settingsModal.classList.add('open'); }
-    function closeSettings() { settingsModal.classList.remove('open'); }
+    function openSettings() {
+    history.pushState({ windowId: 'settings' }, '', '');
+    settingsModal.classList.add('open');
+}
+    function closeSettings() {
+    settingsModal.classList.remove('open');
+    history.back();
+}
     
     document.getElementById('open-settings-btn').addEventListener('click', openSettings);
     document.getElementById('close-settings-btn').addEventListener('click', closeSettings);
 
-    // --- VIDEO TUTORIAL LOGIC ---
+    // --- Video Tutorial Logic ---
     const videoModal = document.getElementById('video-modal');
     const tutorialIframe = document.getElementById('tutorial-iframe');
     const tutorialUrl = "https://streamable.com/e/67kj6c?autoplay=1";
     
     document.getElementById('open-tutorial-btn').addEventListener('click', () => {
-        // Set the src only when opening to ensuring autoplay works and it doesn't load in background
         tutorialIframe.src = tutorialUrl;
         videoModal.classList.add('open');
     });
     
     document.getElementById('close-video-btn').addEventListener('click', () => {
         videoModal.classList.remove('open');
-        // Clear src to stop video/audio
         setTimeout(() => { tutorialIframe.src = ""; }, 300); 
     });
     
-    // Close video modal if clicking outside the video container
     videoModal.addEventListener('click', (e) => {
         if (e.target === videoModal) {
             videoModal.classList.remove('open');
@@ -856,17 +869,19 @@
         }
     });
 
+    // --- Service Worker (Offline Capability) ---
     if ('serviceWorker' in navigator) {
         const swCode = `const CACHE_NAME='yaru-v1';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(['./','index.html'])));});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
         const blob = new Blob([swCode], {type: 'text/javascript'});
         navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.error);
     }
 
+    // --- Text-to-Speech (TTS) ---
     const synth = window.speechSynthesis;
     let japaneseVoice = null;
     let spokenSegments = new Set();   
     let speechToken = 0;             
-    let isComposing = false; // Track IME Composition state
+    let isComposing = false; // IME state tracking
 
     function hapticFeedback(pattern = [40]) { if (userSettings.haptics && navigator.vibrate) navigator.vibrate(pattern); }
 
@@ -916,6 +931,7 @@
         synth.speak(jp);
     }
 
+    // --- Main Application Logic ---
     document.addEventListener('DOMContentLoaded', () => {
         loadSettings(); 
 
@@ -938,13 +954,14 @@
         let currentSentenceIndex = 0; 
         let sentenceBlocks = [];
 
-        // --- Composition Event Listeners for IME Support ---
+        // IME Composition Events (Prevent premature validation)
         userInputEl.addEventListener('compositionstart', () => { isComposing = true; });
         userInputEl.addEventListener('compositionend', (e) => { 
             isComposing = false; 
-            handleTyping(e); // Re-check immediately when composition ends
+            handleTyping(e);
         });
 
+        // --- Library & Storage Management ---
         function loadLibraryFromStorage() {
             const stored = localStorage.getItem('yaruLibrary');
             if (stored) {
@@ -957,11 +974,9 @@
 
         function addToLibrary(lessonObj) {
             lessonObj.id = Date.now().toString();
-            // Sequential Loop for shapes (1-14)
             const shapeIndex = (libraryData.length % 14) + 1;
             lessonObj.shape = `shape-${shapeIndex}`;
             
-            // Sequential Loop for colors (1-6)
             const colorIndex = (libraryData.length % 6) + 1;
             lessonObj.colorVariant = `color-${colorIndex}`;
 
@@ -998,14 +1013,13 @@
                     const infoDiv = document.createElement('div');
                     infoDiv.className = 'story-info';
                     
-                    // --- Parse ID for Date/Time ---
                     let dateStr = "";
                     let timeStr = "";
                     try {
                         const dateObj = new Date(parseInt(lesson.id));
                         dateStr = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
                         timeStr = dateObj.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-                    } catch(e) { /* ignore if ID is invalid */ }
+                    } catch(e) { }
 
                     infoDiv.innerHTML = `<h3>${lesson.lessonTitle || 'Untitled Lesson'}</h3>`;
                     if(dateStr) {
@@ -1014,7 +1028,6 @@
 
                     const delBtn = document.createElement('div');
                     delBtn.className = 'delete-card';
-                    // Updated to Bin/Trash Icon
                     delBtn.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M6,19c0,1.1,0.9,2,2,2h8c1.1,0,2-0.9,2-2V7H6V19z M19,4h-3.5l-1-1h-5l-1,1H5v2h14V4z"/></svg>';
                     delBtn.onclick = (e) => { e.stopPropagation(); deleteFromLibrary(e, lesson.id); };
                     card.appendChild(shapeIcon); card.appendChild(infoDiv); card.appendChild(delBtn);
@@ -1023,6 +1036,7 @@
             }
         }
 
+        // --- Lesson Logic ---
         function openLesson(lessonData) {
             currentLessonData = lessonData;
             sentenceBlocks = lessonData.contentBlocks.filter(block => block.type === 'sentence');
@@ -1080,19 +1094,18 @@
             setTimeout(() => userInputEl.focus(), 100);
         }
 
+        // --- Typing & Validation Logic ---
         function handleTyping(event) {
             const typedText = event.target.value;
             const targetHiragana = event.target.getAttribute('data-target');
             if (!targetHiragana) return;
             
-            // 1. Immediately clear classes to reset to default "white/glass"
             userInputEl.classList.remove('correct', 'incorrect');
 
             const currentSentenceDiv = sentenceContainerEl.querySelectorAll('.full-sentence')[currentSentenceIndex];
             if (!currentSentenceDiv) return;
             const currentSegments = currentSentenceDiv.querySelectorAll('.segment');
             
-            // Normalize inputs to NFD
             const normTyped = typedText.normalize('NFD');
             const normTarget = targetHiragana.normalize('NFD');
             
@@ -1107,10 +1120,8 @@
                 const segEnd = tempLength;
                 const segId = segEl.dataset.segId;
                 
-                // Visual Check: Separate distinct words
                 if (typedText.length >= segEnd) {
                     const typedSegment = typedText.substring(segStart, segEnd);
-                    // Strictly check if the characters match for completion
                     if (typedSegment === segmentData.furigana) {
                         segEl.classList.remove('correct');
                         segEl.classList.add('completed');
@@ -1119,7 +1130,6 @@
                             speakSegment(segmentData); 
                         }
                     } else {
-                        // Length met, but char differs. Keep as 'correct' (green) not completed.
                         segEl.classList.remove('completed');
                         segEl.classList.add('correct');
                     }
@@ -1141,14 +1151,9 @@
                 currentSentenceIndex++;
                 setupNextSentence();
             } else {
-                // Lenient Prefix matching using Normalization
-                // If it starts with the correct characters, turn Green.
                 if (typedText.length > 0 && normTarget.startsWith(normTyped)) {
                     userInputEl.classList.add('correct');
                 } else {
-                    // Mismatch detected. 
-                    // If IS composing, do nothing (keep removed classes -> White/Default).
-                    // If NOT composing, turn Red.
                     if (!isComposing) {
                         userInputEl.classList.add('incorrect');
                         userInputEl.classList.add('shake');
@@ -1159,6 +1164,7 @@
             }
         }
 
+        // --- SPA Navigation (Routing) ---
         function renderView(windowId) {
             libraryWindow.classList.remove('active');
             lessonWindow.classList.remove('active');
@@ -1185,15 +1191,21 @@
         }
 
         window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.windowId) {
-                renderView(event.state.windowId);
-            } else {
-                renderView('library');
-            }
-        });
+    if (settingsModal.classList.contains('open')) {
+        closeSettings();
+        return;
+    }
+
+    if (event.state && event.state.windowId) {
+        renderView(event.state.windowId);
+    } else {
+        renderView('library');
+    }
+});
 
         history.replaceState({ windowId: 'library' }, '', '');
 
+        // --- Event Listeners ---
         mainLoadBtn.addEventListener('click', () => navigateTo('json'));
         document.getElementById('back-from-lesson-btn').addEventListener('click', () => history.back());
         document.getElementById('back-from-json-btn').addEventListener('click', () => history.back());
@@ -1205,30 +1217,44 @@
              setupNextSentence();
         });
 
+        // --- JSON Import & Prompt Copy ---
         document.getElementById('copy-prompt-btn').addEventListener('click', () => {
-             const fullPrompt = `Generate a JSON object for a short Japanese lesson. The lesson should contain three or more sentences.
+             const fullPrompt = `Generate a JSON object for a short Japanese lesson.
+The lesson should contain three or more natural Japanese sentences. 
+Format it exactly as JSON and wrap it in a triple-backtick code block labeled json so it’s ready to copy.
 
 Follow this JSON structure EXACTLY:
 
 {
-  "lessonTitle": "A creative title for the lesson",
-  "contentBlocks": [
-    {
-      "type": "sentence",
-      "id": "s1",
-      "segments": [
-        {
-          "surface": "The Japanese word or particle (e.g., '私' or 'は')",
-          "furigana": "The hiragana reading (e.g., 'わたし' or 'は')",
-          "romaji": "The romaji reading (e.g., 'watashi' or 'wa')",
-          "meaning": "The English meaning",
-          "isKanji": true
-        }
-      ]
-    }
-  ]
+"lessonTitle": "A creative title for the lesson",
+"contentBlocks": [
+{
+"type": "sentence",
+"id": "s1",
+"segments": [
+{
+"surface": "The Japanese word or particle (e.g., 私 or は)",
+"furigana": "The hiragana reading",
+"romaji": "The romaji reading",
+"meaning": "The English meaning",
+"isKanji": true
 }
-Separate punctuation into own segments. Return only JSON.`;
+]
+}
+]
+}
+
+Rules:
+• Keep sentences simple and correct.
+• Split words and particles into separate segments.
+• Separate punctuation (、 。 ？ ！) into their own segments.
+• Use isKanji: true only for kanji.
+• Use isKanji: false for hiragana, katakana, and punctuation.
+• Furigana must be hiragana.
+• Romaji must match the furigana.
+• Keep segment order exactly as in the sentence.
+
+Return only valid JSON. No extra text.`;
              navigator.clipboard.writeText(fullPrompt).then(() => {
                 const btn = document.getElementById('copy-prompt-btn');
                 btn.textContent = 'Copied!';
@@ -1266,7 +1292,4 @@ Separate punctuation into own segments. Return only JSON.`;
     });
     </script>
 </body>
-
-
 </html>
-
