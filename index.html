@@ -55,6 +55,14 @@
 
             --radius-full: 999px;
             --radius-card: 28px; 
+
+            /* --- Interaction Physics --- */
+            /* Snappy entrance, slow smooth finish */
+            --ease-material: cubic-bezier(0.2, 0.0, 0, 1.0); 
+            /* Bouncy spring effect for buttons */
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); 
+            /* Smooth slide */
+            --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
         }
 
         /* Light Theme Overrides */
@@ -105,7 +113,7 @@
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.4s var(--ease-material), color 0.4s var(--ease-material);
         }
 
         .app-container {
@@ -148,6 +156,7 @@
             padding: 0;
             z-index: 1000;
             pointer-events: none; 
+            transition: transform 0.4s var(--ease-spring);
         }
         
         .fixed-input-bar > * {
@@ -158,12 +167,15 @@
         .window {
             display: none;
             opacity: 0;
-            transition: opacity 0.3s cubic-bezier(0.2, 0.0, 0, 1.0); 
+            /* Added slight vertical slide for spatial feel */
+            transform: translateY(15px);
+            transition: opacity 0.4s var(--ease-material), transform 0.4s var(--ease-material); 
             width: 100%;
         }
         .window.active {
             display: block;
             opacity: 1;
+            transform: translateY(0);
         }
         
         .icon {
@@ -186,16 +198,22 @@
             color: var(--on-surface-variant);
             cursor: pointer;
             padding: 8px; 
-            transition: color 0.2s ease;
+            transition: all 0.3s var(--ease-spring);
             user-select: none; 
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: transparent;
         }
-        .back-button:hover, .back-button:active {
-            background-color: rgba(128,128,128, 0.1);
+        .back-button:hover {
             color: var(--m3-primary);
+            background-color: rgba(182, 240, 109, 0.08);
+            transform: scale(1.05);
+        }
+        .back-button:active {
+            transform: scale(0.9);
+            background-color: rgba(182, 240, 109, 0.15);
         }
 
         .window-header h2 {
@@ -205,7 +223,11 @@
             font-size: 1.25em;
             font-weight: 600;
             color: var(--m3-primary);
+            opacity: 0;
+            animation: fadeIn 0.4s 0.1s forwards var(--ease-material);
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- Library Header Styles --- */
         .library-header {
@@ -232,6 +254,11 @@
             padding: 8px 24px;
             border-radius: 99px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-material);
+        }
+        .header-title-group:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         .library-header h1 {
@@ -251,16 +278,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: transform 0.4s var(--ease-spring), background-color 0.2s;
         }
         
         .tutorial-icon:active {
             background-color: rgba(0, 0, 0, 0.1); 
-            transform: scale(0.95);
+            transform: scale(0.8);
         }
-        .tutorial-icon:hover { opacity: 0.9; }
-        .tutorial-icon:active { transform: scale(0.9); }
 
+        /* --- FIXED SETTINGS ICON ANIMATION --- */
         .settings-icon {
             color: var(--on-surface-variant);
             padding: 8px;
@@ -269,23 +295,41 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.3s;
+            /* Transitioning properties separately ensures smooth transforms without layout jitters */
+            transition: transform 0.4s var(--ease-spring), background-color 0.2s, color 0.2s;
             margin-right: -8px; 
+            -webkit-tap-highlight-color: transparent; /* Remove default gray tap box */
         }
-        .settings-icon:active { background-color: rgba(128,128,128, 0.1); }
+
+        /* Only apply rotation on devices that support hover (Mouse) */
+        /* This prevents the "sticky" rotated state on mobile phones */
+        @media (hover: hover) {
+            .settings-icon:hover {
+                color: var(--on-surface);
+                background-color: var(--surface-container-high);
+                transform: rotate(15deg);
+            }
+        }
+
+        /* On click/tap (Active state) */
+        .settings-icon:active { 
+            background-color: rgba(128,128,128, 0.1); 
+            /* Simple scale down - no rotation, so lines stay horizontal and visible */
+            transform: scale(0.85); 
+        }
 
         /* --- Video & Settings Modals --- */
         #video-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(8px);
             z-index: 2100; 
             display: none;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s var(--ease-material);
         }
         #video-modal.open { display: flex; opacity: 1; }
         
@@ -296,8 +340,11 @@
             position: relative;
             border-radius: var(--radius-card);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transform: scale(0.9);
+            transition: transform 0.4s var(--ease-spring);
         }
+        #video-modal.open .video-popup-container { transform: scale(1); }
         
         .close-video-btn {
             position: absolute;
@@ -311,6 +358,7 @@
             padding: 8px;
         }
 
+        /* Settings as a Bottom Sheet Slide-up */
         #settings-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -319,10 +367,16 @@
             display: none;
             flex-direction: column;
             opacity: 0;
-            transition: opacity 0.2s ease;
+            /* Start slightly lower for slide effect */
+            transform: translateY(20%);
+            transition: opacity 0.3s ease, transform 0.4s var(--ease-material);
             overflow-y: auto;
         }
-        #settings-modal.open { display: flex; opacity: 1; }
+        #settings-modal.open { 
+            display: flex; 
+            opacity: 1; 
+            transform: translateY(0%);
+        }
         
         .modal-content {
             background-color: var(--background-color);
@@ -369,7 +423,10 @@
             background: var(--surface-container-high);
             border-radius: 16px;
             margin-bottom: 8px;
+            transition: transform 0.2s var(--ease-material);
         }
+        .setting-row:active { transform: scale(0.98); }
+
         .setting-label {
             font-size: 1em;
             color: var(--on-surface);
@@ -387,7 +444,7 @@
             cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
             background-color: #938F99;
-            transition: .4s;
+            transition: .4s var(--ease-spring);
             border-radius: 34px;
         }
         .slider:before {
@@ -398,8 +455,9 @@
             left: 4px;
             bottom: 4px;
             background-color: #fff;
-            transition: .4s;
+            transition: .4s var(--ease-spring);
             border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         input:checked + .slider { background-color: var(--m3-primary); }
         input:checked + .slider:before { transform: translateX(20px); background-color: var(--m3-on-primary); }
@@ -415,7 +473,12 @@
             cursor: pointer;
             display: flex; align-items: center; gap: 15px;
             font-weight: 500;
-            transition: background 0.2s, color 0.2s;
+            transition: background 0.3s, transform 0.3s var(--ease-spring);
+            position: relative;
+            overflow: hidden;
+        }
+        .theme-btn:active {
+            transform: scale(0.95);
         }
         .theme-btn.active {
             background-color: var(--m3-primary); 
@@ -431,7 +494,7 @@
             padding-bottom: 40px;
         }
 
-    .story-card {
+        .story-card {
             display: flex;
             align-items: center;
             background-color: var(--card-bg); 
@@ -440,10 +503,26 @@
             padding: 20px; 
             cursor: pointer;
             position: relative;
-            transition: transform 0.1s ease, background-color 0.2s;
+            /* Physics-based ease for the hover/active state */
+            transition: transform 0.4s var(--ease-spring), background-color 0.2s;
             width: 100%;
             box-sizing: border-box;
             overflow: hidden; 
+            /* Entrance animation */
+            animation: slideUpFade 0.6s var(--ease-material) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        /* Staggered animation delays for the first few cards */
+        .story-card:nth-child(1) { animation-delay: 0.05s; }
+        .story-card:nth-child(2) { animation-delay: 0.1s; }
+        .story-card:nth-child(3) { animation-delay: 0.15s; }
+        .story-card:nth-child(4) { animation-delay: 0.2s; }
+        .story-card:nth-child(n+5) { animation-delay: 0.25s; }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .story-card::after {
@@ -455,11 +534,16 @@
             border-radius: 50%;
             transform: translate(-50%, -50%);
             transition: width 0.3s, height 0.3s;
+            pointer-events: none;
         }
         .story-card:active::after {
-            width: 300px; height: 300px;
+            width: 400px; height: 400px;
+            transition: width 0.4s ease-out, height 0.4s ease-out;
         }
-        .story-card:active { transform: scale(0.98); }
+        .story-card:active { 
+            transform: scale(0.96); 
+            background-color: var(--surface-container);
+        }
 
         .story-shape-icon {
             width: 80px;
@@ -528,13 +612,14 @@
             justify-content: center;
             color: var(--on-surface-variant);
             border-radius: 50%;
-            transition: background 0.2s, color 0.2s;
+            transition: transform 0.3s var(--ease-spring), color 0.2s;
             margin-left: 8px;
             z-index: 5;
         }
         .delete-card:active {
             background: rgba(128,128,128,0.2);
             color: var(--incorrect-color);
+            transform: scale(0.9) rotate(-10deg);
         }
         .delete-card svg { width: 22px; height: 22px; }
 
@@ -557,10 +642,16 @@
             border-radius: 6px;
             padding: 2px 2px;
             margin: 0 -2px;
-            transition: background-color 0.2s ease, color 0.2s ease; 
+            transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s var(--ease-spring); 
         }
-        .segment.correct { color: var(--correct-color); text-shadow: 0 0 15px rgba(118, 198, 57, 0.3); }
-        .segment.completed { color: var(--completed-color); }
+        .segment.correct { 
+            color: var(--correct-color); 
+            text-shadow: 0 0 20px rgba(118, 198, 57, 0.4); 
+        }
+        .segment.completed { 
+            color: var(--completed-color); 
+            transform: scale(1);
+        }
         .segment.show-tooltip { 
             background-color: rgba(208, 188, 255, 0.2); 
             border-bottom: 2px solid var(--m3-primary);
@@ -569,15 +660,20 @@
         .tooltip {
             visibility: hidden; position: absolute; 
             background-color: var(--surface-container-high);
-            border: 1px solid #444;
+            border: 1px solid rgba(255,255,255,0.1);
             color: var(--on-surface); 
             text-align: center; border-radius: 8px; padding: 10px 16px;
-            z-index: 10; bottom: 135%; left: 50%; transform: translateX(-50%); 
-            opacity: 0; transition: opacity 0.3s; 
+            z-index: 10; bottom: 135%; left: 50%; transform: translateX(-50%) scale(0.8); 
+            opacity: 0; 
+            transition: opacity 0.2s, transform 0.2s var(--ease-spring); 
             font-size: 0.5em; white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
-        .segment.show-tooltip .tooltip { visibility: visible; opacity: 1; }
+        .segment.show-tooltip .tooltip { 
+            visibility: visible; 
+            opacity: 1; 
+            transform: translateX(-50%) scale(1); 
+        }
 
         /* --- Typing Input Styles --- */
         .typing-input {
@@ -589,25 +685,37 @@
             border-radius: 99px; 
             box-sizing: border-box; text-align: center;
             color: var(--on-surface);
-            transition: all 0.2s ease;
+            transition: transform 0.2s var(--ease-spring), border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
             caret-color: var(--m3-primary);
             box-shadow: 0 8px 24px rgba(0,0,0,0.15); 
         }
         .typing-input:focus { 
-            outline: none; border-color: var(--m3-primary);
+            outline: none; 
+            border-color: var(--m3-primary);
             background-color: var(--surface-container);
+            /* Breathing shadow effect for focus */
+            box-shadow: 0 8px 30px rgba(182, 240, 109, 0.15);
+            transform: translateY(-2px);
         }
-        .typing-input.correct { border-color: var(--correct-color); background-color: rgba(118, 198, 57, 0.1); }
-        .typing-input.incorrect { border-color: var(--incorrect-color); background-color: var(--error-bg); color: var(--incorrect-color); }
+        .typing-input.correct { 
+            border-color: var(--correct-color); 
+            background-color: rgba(118, 198, 57, 0.1); 
+            transform: scale(1.02);
+        }
+        .typing-input.incorrect { 
+            border-color: var(--incorrect-color); 
+            background-color: var(--error-bg); 
+            color: var(--incorrect-color); 
+        }
 
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
-          20% { transform: translateX(-8px); }
-          40% { transform: translateX(8px); }
-          60% { transform: translateX(-8px); }
-          80% { transform: translateX(8px); }
+          20% { transform: translateX(-6px) rotate(-1deg); }
+          40% { transform: translateX(6px) rotate(1deg); }
+          60% { transform: translateX(-3px); }
+          80% { transform: translateX(3px); }
         }
-        .shake { animation: shake 0.2s ease-in-out; }
+        .shake { animation: shake 0.3s ease-in-out; }
 
         .input-placeholder {
             width: 80px; 
@@ -620,10 +728,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s, box-shadow 0.2s;
+            transition: transform 0.4s var(--ease-spring), box-shadow 0.3s;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .input-placeholder:active { transform: scale(0.90); }
+        .input-placeholder:active { transform: scale(0.85); }
         .input-placeholder svg { width: 36px; height: 36px; fill: currentColor; }
 
         /* --- JSON Import Styles --- */
@@ -634,8 +742,13 @@
             font-family: monospace; font-size: 0.9em; box-sizing: border-box; margin-bottom: 20px;
             background-color: var(--surface-container-high); color: var(--on-surface);
             resize: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        #json-paste-area:focus { outline: 2px solid var(--m3-primary); border-color: transparent; }
+        #json-paste-area:focus { 
+            outline: none;
+            border-color: var(--m3-primary); 
+            box-shadow: 0 0 0 4px rgba(182, 240, 109, 0.1);
+        }
 
         .button-group { display: flex; gap: 12px; padding-bottom: 20px; }
         
@@ -648,15 +761,26 @@
         .button {
             flex-grow: 1; padding: 16px; font-size: 1em; font-weight: 700;
             border: none; border-radius: 99px; color: #000; cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s; 
+            transition: transform 0.4s var(--ease-spring), box-shadow 0.3s, opacity 0.3s; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
-        .button:active { transform: scale(0.97); }
+        /* Subtle shine effect on click */
+        .button::after {
+            content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
+            background: rgba(255,255,255,0.2);
+            opacity: 0; transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .button:active::after { opacity: 1; }
+        .button:active { transform: scale(0.92); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
         #copy-prompt-btn { background-color: var(--shape-color-2); }
         #load-story-btn { background-color: var(--m3-primary); color: var(--m3-on-primary); }
         #repeat-lesson-btn { background-color: var(--shape-color-2); } 
         #load-new-btn { background-color: var(--m3-primary); color: var(--m3-on-primary); } 
-        .button:disabled { background: #444 !important; color: #888 !important; cursor: not-allowed; opacity: 1; }
+        .button:disabled { background: #444 !important; color: #888 !important; cursor: not-allowed; opacity: 1; transform: none; }
     </style>
 </head>
 <body>
@@ -833,39 +957,35 @@
         document.querySelectorAll('.theme-btn')[index].classList.add('active');
     }
 
-    // --- Settings Modal Logic ---
+    // --- Modals & Navigation (Universal Back Button Fix) ---
     const settingsModal = document.getElementById('settings-modal');
-    function openSettings() {
-    history.pushState({ windowId: 'settings' }, '', '');
-    settingsModal.classList.add('open');
-}
-    function closeSettings() {
-    settingsModal.classList.remove('open');
-    history.back();
-}
-    
-    document.getElementById('open-settings-btn').addEventListener('click', openSettings);
-    document.getElementById('close-settings-btn').addEventListener('click', closeSettings);
-
-    // --- Video Tutorial Logic ---
     const videoModal = document.getElementById('video-modal');
     const tutorialIframe = document.getElementById('tutorial-iframe');
     const tutorialUrl = "https://streamable.com/e/67kj6c?autoplay=1";
-    
+
+    function openSettings() {
+        history.pushState({ windowId: 'settings' }, '', '');
+        settingsModal.classList.add('open');
+    }
+
+    document.getElementById('open-settings-btn').addEventListener('click', openSettings);
+    // Use history.back() for the close button. The popstate listener will handle the UI update.
+    document.getElementById('close-settings-btn').addEventListener('click', () => history.back());
+
     document.getElementById('open-tutorial-btn').addEventListener('click', () => {
         tutorialIframe.src = tutorialUrl;
+        history.pushState({ windowId: 'video' }, '', '');
         videoModal.classList.add('open');
     });
-    
+
     document.getElementById('close-video-btn').addEventListener('click', () => {
-        videoModal.classList.remove('open');
-        setTimeout(() => { tutorialIframe.src = ""; }, 300); 
+        history.back();
     });
-    
+
+    // Handle background click on video modal to close it
     videoModal.addEventListener('click', (e) => {
         if (e.target === videoModal) {
-            videoModal.classList.remove('open');
-            setTimeout(() => { tutorialIframe.src = ""; }, 300);
+            history.back();
         }
     });
 
@@ -1191,18 +1311,32 @@
         }
 
         window.addEventListener('popstate', (event) => {
-    if (settingsModal.classList.contains('open')) {
-        closeSettings();
-        return;
-    }
+            // 1. Handle Settings Modal Close
+            if (settingsModal.classList.contains('open') && (!event.state || event.state.windowId !== 'settings')) {
+                settingsModal.classList.remove('open');
+            }
 
-    if (event.state && event.state.windowId) {
-        renderView(event.state.windowId);
-    } else {
-        renderView('library');
-    }
-});
+            // 2. Handle Video Modal Close
+            if (videoModal.classList.contains('open') && (!event.state || event.state.windowId !== 'video')) {
+                videoModal.classList.remove('open');
+                setTimeout(() => { tutorialIframe.src = ""; }, 300);
+            }
 
+            // 3. Handle Main View Navigation
+            if (event.state && event.state.windowId) {
+                if (event.state.windowId === 'settings') {
+                    settingsModal.classList.add('open');
+                } else if (event.state.windowId === 'video') {
+                    videoModal.classList.add('open');
+                } else {
+                    renderView(event.state.windowId);
+                }
+            } else {
+                renderView('library');
+            }
+        });
+
+        // Use replaceState to set the initial state so back buttons work correctly from start
         history.replaceState({ windowId: 'library' }, '', '');
 
         // --- Event Listeners ---
