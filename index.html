@@ -31,7 +31,8 @@
             
             /* Material 3 Key Colors */
             --m3-primary: #b6f06d;
-            --m3-on-primary: #203600;
+            /* Text on primary color set to White */
+            --m3-on-primary: #ffffff;
             --m3-primary-container: #2f3f14;
             
             --glass-bg: rgba(18, 20, 12, 0.85);
@@ -47,8 +48,10 @@
             /* Feedback Colors */
             --correct-color: #b6f06d;    
             --completed-color: #49454f; 
-            --incorrect-color: #ffb4ab;  
+            --incorrect-color: #ff5449; 
+            --warning-color: #ffd700;   
             --error-bg: #410e0b;
+            --warning-bg: rgba(255, 215, 0, 0.25);
             
             --card-border: rgba(138, 147, 111, 0.3); 
             --card-bg: rgba(255, 255, 255, 0.05);
@@ -57,11 +60,8 @@
             --radius-card: 28px; 
 
             /* --- Interaction Physics --- */
-            /* Snappy entrance, slow smooth finish */
             --ease-material: cubic-bezier(0.2, 0.0, 0, 1.0); 
-            /* Bouncy spring effect for buttons */
             --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); 
-            /* Smooth slide */
             --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
         }
 
@@ -74,7 +74,7 @@
             --on-surface-variant: #6b705f;
             
             --m3-primary: #b6f06d;       
-            --m3-on-primary: #1b2a00;    
+            --m3-on-primary: #ffffff;    
             --m3-primary-container: #d2ff9a;
 
             --glass-bg: rgba(255, 255, 255, 0.95);
@@ -89,7 +89,9 @@
             --correct-color: #556e29;
             --completed-color: #E0E0E0;
             --incorrect-color: #BA1A1A;
+            --warning-color: #bfa100;
             --error-bg: #FFDAD6;
+            --warning-bg: rgba(255, 215, 0, 0.3);
             
             --card-border: rgba(123, 139, 102, 0.3); 
             --card-bg: rgba(255, 255, 255, 0.96);
@@ -167,7 +169,6 @@
         .window {
             display: none;
             opacity: 0;
-            /* Added slight vertical slide for spatial feel */
             transform: translateY(15px);
             transition: opacity 0.4s var(--ease-material), transform 0.4s var(--ease-material); 
             width: 100%;
@@ -286,7 +287,6 @@
             transform: scale(0.8);
         }
 
-        /* --- FIXED SETTINGS ICON ANIMATION --- */
         .settings-icon {
             color: var(--on-surface-variant);
             padding: 8px;
@@ -295,14 +295,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Transitioning properties separately ensures smooth transforms without layout jitters */
             transition: transform 0.4s var(--ease-spring), background-color 0.2s, color 0.2s;
             margin-right: -8px; 
-            -webkit-tap-highlight-color: transparent; /* Remove default gray tap box */
+            -webkit-tap-highlight-color: transparent; 
         }
 
-        /* Only apply rotation on devices that support hover (Mouse) */
-        /* This prevents the "sticky" rotated state on mobile phones */
         @media (hover: hover) {
             .settings-icon:hover {
                 color: var(--on-surface);
@@ -311,10 +308,8 @@
             }
         }
 
-        /* On click/tap (Active state) */
         .settings-icon:active { 
             background-color: rgba(128,128,128, 0.1); 
-            /* Simple scale down - no rotation, so lines stay horizontal and visible */
             transform: scale(0.85); 
         }
 
@@ -358,7 +353,6 @@
             padding: 8px;
         }
 
-        /* Settings as a Bottom Sheet Slide-up */
         #settings-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -367,7 +361,6 @@
             display: none;
             flex-direction: column;
             opacity: 0;
-            /* Start slightly lower for slide effect */
             transform: translateY(20%);
             transition: opacity 0.3s ease, transform 0.4s var(--ease-material);
             overflow-y: auto;
@@ -503,18 +496,15 @@
             padding: 20px; 
             cursor: pointer;
             position: relative;
-            /* Physics-based ease for the hover/active state */
             transition: transform 0.4s var(--ease-spring), background-color 0.2s;
             width: 100%;
             box-sizing: border-box;
             overflow: hidden; 
-            /* Entrance animation */
             animation: slideUpFade 0.6s var(--ease-material) forwards;
             opacity: 0;
             transform: translateY(20px);
         }
         
-        /* Staggered animation delays for the first few cards */
         .story-card:nth-child(1) { animation-delay: 0.05s; }
         .story-card:nth-child(2) { animation-delay: 0.1s; }
         .story-card:nth-child(3) { animation-delay: 0.15s; }
@@ -552,7 +542,6 @@
             margin-right: 20px;
         }
 
-        /* Color & Shape Classes */
         .color-1 { background-color: var(--shape-color-1); }
         .color-2 { background-color: var(--shape-color-2); }
         .color-3 { background-color: var(--shape-color-3); }
@@ -643,12 +632,20 @@
             padding: 2px 2px;
             margin: 0 -2px;
             transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s var(--ease-spring); 
+            
+            /* PROGRESS GRADIENT: This allows character-level filling! */
+            --prog: 0%;
+            background-image: linear-gradient(to right, var(--correct-color) var(--prog), var(--on-surface) var(--prog));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent; /* Makes text take background color */
+            /* Ensure text is visible if background-clip fails or for generic state */
+            text-decoration-color: transparent; 
         }
-        .segment.correct { 
-            color: var(--correct-color); 
-            text-shadow: 0 0 20px rgba(118, 198, 57, 0.4); 
-        }
+        
         .segment.completed { 
+            /* When fully done, switch to solid completed color */
+            background-image: none;
             color: var(--completed-color); 
             transform: scale(1);
         }
@@ -693,7 +690,6 @@
             outline: none; 
             border-color: var(--m3-primary);
             background-color: var(--surface-container);
-            /* Breathing shadow effect for focus */
             box-shadow: 0 8px 30px rgba(182, 240, 109, 0.15);
             transform: translateY(-2px);
         }
@@ -702,20 +698,28 @@
             background-color: rgba(118, 198, 57, 0.1); 
             transform: scale(1.02);
         }
+        /* New Warning Style for Yellow State */
+        .typing-input.warning {
+            border-color: var(--warning-color);
+            background-color: var(--warning-bg);
+            color: #ffffff !important; 
+        }
         .typing-input.incorrect { 
             border-color: var(--incorrect-color); 
             background-color: var(--error-bg); 
-            color: var(--incorrect-color); 
+            color: #ffffff !important; 
         }
 
+        /* MOVIE SCRUBBING SHAKE (PURE SIDE-TO-SIDE) - 0.2s */
         @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          20% { transform: translateX(-6px) rotate(-1deg); }
-          40% { transform: translateX(6px) rotate(1deg); }
-          60% { transform: translateX(-3px); }
-          80% { transform: translateX(3px); }
+          0% { transform: translateX(0); }
+          20% { transform: translateX(-14px); }
+          40% { transform: translateX(14px); }
+          60% { transform: translateX(-8px); }
+          80% { transform: translateX(8px); }
+          100% { transform: translateX(0); }
         }
-        .shake { animation: shake 0.3s ease-in-out; }
+        .shake { animation: shake 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
 
         .input-placeholder {
             width: 80px; 
@@ -760,13 +764,12 @@
         
         .button {
             flex-grow: 1; padding: 16px; font-size: 1em; font-weight: 700;
-            border: none; border-radius: 99px; color: #000; cursor: pointer;
+            border: none; border-radius: 99px; color: #ffffff; cursor: pointer;
             transition: transform 0.4s var(--ease-spring), box-shadow 0.3s, opacity 0.3s; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             position: relative;
             overflow: hidden;
         }
-        /* Subtle shine effect on click */
         .button::after {
             content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
             background: rgba(255,255,255,0.2);
@@ -832,9 +835,19 @@
                     </label>
                 </div>
                 <div class="setting-row">
-                    <span class="setting-label">Lesson Speech (TTS)</span>
+                    <span class="setting-label">Auto Speech</span>
                     <label class="toggle-switch">
                         <input type="checkbox" id="tts-toggle" onchange="toggleSetting('tts')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h4>Dynamic Clear</h4>
+                <div class="setting-row">
+                    <span class="setting-label">Auto Remove</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="auto-advance-toggle" onchange="toggleSetting('autoAdvance')">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -920,7 +933,7 @@
 
     <script>
     // --- Configuration & State ---
-    const userSettings = { theme: 'system', haptics: true, tts: true };
+    const userSettings = { theme: 'system', haptics: true, tts: true, autoAdvance: true };
 
     // --- Theme Management ---
     function loadSettings() {
@@ -930,6 +943,7 @@
         updateActiveBtn(userSettings.theme);
         document.getElementById('haptic-toggle').checked = userSettings.haptics;
         document.getElementById('tts-toggle').checked = userSettings.tts;
+        document.getElementById('auto-advance-toggle').checked = userSettings.autoAdvance;
     }
 
     function saveSettings() { localStorage.setItem('yaruSettings', JSON.stringify(userSettings)); }
@@ -1020,19 +1034,22 @@
             if (segment.surface === "へ") return "え";
             if (segment.surface === "を") return "お";
         }
+        // Fallback to surface if furigana is empty (common for punctuation)
         return segment.furigana || segment.surface || '';
     }
 
     function speakSegment(segment) {
         if (!userSettings.tts || !synth || !japaneseVoice) return;
-        const furigana = segment.furigana || segment.surface || '';
-        if (isOnlyPunctuation(furigana)) return;
+        
+        // Use adjusted pronunciation logic which handles empty furigana fallback
+        const textToSpeak = adjustParticlePronunciation(segment);
+        if (isOnlyPunctuation(textToSpeak)) return;
 
         speechToken++;
         const thisToken = speechToken;
         synth.cancel();
 
-        const jp = new SpeechSynthesisUtterance(adjustParticlePronunciation(segment));
+        const jp = new SpeechSynthesisUtterance(textToSpeak);
         jp.voice = japaneseVoice;
         jp.lang = 'ja-JP';
         
@@ -1073,6 +1090,8 @@
         let currentLessonData = null; 
         let currentSentenceIndex = 0; 
         let sentenceBlocks = [];
+        let isSentenceComplete = false; 
+        let inputOffset = 0; 
 
         // IME Composition Events (Prevent premature validation)
         userInputEl.addEventListener('compositionstart', () => { isComposing = true; });
@@ -1193,7 +1212,7 @@
             });
         }
 
-        function setupNextSentence() {
+        function setupNextSentence(keepInput = false) {
             if (currentSentenceIndex >= sentenceBlocks.length) {
                 userInputEl.style.display = 'none';
                 controlButtons.style.display = 'flex';
@@ -1201,88 +1220,230 @@
                 return;
             }
             spokenSegments.clear();
+            isSentenceComplete = false;
             const currentBlock = sentenceBlocks[currentSentenceIndex];
-            const targetHiragana = currentBlock.segments.map(s => s.furigana).join('');
-            userInputEl.value = '';
-            userInputEl.classList.remove('correct', 'incorrect');
+            const targetHiragana = currentBlock.segments.map(s => s.furigana || s.surface).join('');
+            
+            // Logic for Auto Delete ON/OFF state
+            if (!keepInput) {
+                userInputEl.value = '';
+                inputOffset = 0;
+            } else {
+                // If keeping input, ignore what was typed previously by setting an offset
+                inputOffset = userInputEl.value.length;
+            }
+
+            userInputEl.classList.remove('correct', 'incorrect', 'warning');
             userInputEl.setAttribute('data-target', targetHiragana);
             userInputEl.disabled = false;
             userInputEl.placeholder = 'ここにひらがなで入力';
             userInputEl.style.display = 'block';
             controlButtons.style.display = 'none';
             mainLoadBtn.style.display = 'none';
-            setTimeout(() => userInputEl.focus(), 100);
+            
+            setTimeout(() => userInputEl.focus(), 10);
         }
 
         // --- Typing & Validation Logic ---
+        function checkJapaneseNuance(typedChar, targetChar) {
+            const pairs = [
+                ['か','が'],['き','ぎ'],['く','ぐ'],['け','げ'],['こ','ご'],
+                ['さ','ざ'],['し','じ'],['す','ず'],['せ','ぜ'],['そ','ぞ'],
+                ['た','だ'],['ち','ぢ'],['つ','づ'],['て','で'],['と','ど'],
+                ['は','ば'],['ひ','び'],['ふ','ぶ'],['へ','べ'],['ほ','ぼ'],
+                ['は','ぱ'],['ひ','ぴ'],['ふ','ぷ'],['へ','ぺ'],['ほ','ぽ'],
+                ['う','ゔ'],
+                ['あ','ぁ'],['い','ぃ'],['う','ぅ'],['え','ぇ'],['お','ぉ'],
+                ['つ','っ'],['や','ゃ'],['ゆ','ゅ'],['よ','ょ'],['わ','ゎ'],
+                ['か','ヵ'],['け','ヶ'] 
+            ];
+            return pairs.some(p => (p[0] === typedChar && p[1] === targetChar) || (p[0] === targetChar && p[1] === typedChar));
+        }
+
         function handleTyping(event) {
-            const typedText = event.target.value;
-            const targetHiragana = event.target.getAttribute('data-target');
+            const rawValue = event.target.value;
+            
+            // --- BACKWARD DETECTION (REGRESSION LOGIC) ---
+            // Only applies if we are not at the start and text shrank below current start point
+            if (currentSentenceIndex > 0 && rawValue.length < inputOffset) {
+                let runningLength = 0;
+                let foundNewIndex = -1;
+
+                // Find where we are based on total length
+                for (let i = 0; i < sentenceBlocks.length; i++) {
+                    const blockTarget = sentenceBlocks[i].segments.map(s => s.furigana || s.surface).join('').normalize('NFC');
+                    const blockEnd = runningLength + blockTarget.length;
+                    
+                    // If cursor is inside this block (or before its end)
+                    if (rawValue.length < blockEnd) {
+                        foundNewIndex = i;
+                        inputOffset = runningLength;
+                        break;
+                    }
+                    runningLength += blockTarget.length;
+                }
+
+                // Update state and clear visuals for all subsequent blocks
+                if (foundNewIndex !== -1) {
+                    currentSentenceIndex = foundNewIndex;
+                    
+                    // Reset visuals for current and all future sentences
+                    const allSentences = sentenceContainerEl.querySelectorAll('.full-sentence');
+                    for (let i = currentSentenceIndex; i < allSentences.length; i++) {
+                        const sentenceDiv = allSentences[i];
+                        const segments = sentenceDiv.querySelectorAll('.segment');
+                        segments.forEach(seg => {
+                            seg.classList.remove('completed', 'correct');
+                            seg.style.setProperty('--prog', '0%');
+                            // Optional: Clear spoken history for these segments so they speak again
+                            if(spokenSegments.has(seg.dataset.segId)) {
+                                 spokenSegments.delete(seg.dataset.segId);
+                            }
+                        });
+                    }
+                    // Update data-target for the regression
+                    const currentBlock = sentenceBlocks[currentSentenceIndex];
+                    const targetHiragana = currentBlock.segments.map(s => s.furigana || s.surface).join('');
+                    userInputEl.setAttribute('data-target', targetHiragana);
+                }
+            }
+            
+            // Calculate typed text based on the offset
+            const typedText = rawValue.substring(inputOffset).normalize('NFC');
+            const targetHiragana = event.target.getAttribute('data-target').normalize('NFC');
+            
             if (!targetHiragana) return;
             
-            userInputEl.classList.remove('correct', 'incorrect');
+            userInputEl.classList.remove('correct', 'incorrect', 'warning');
 
             const currentSentenceDiv = sentenceContainerEl.querySelectorAll('.full-sentence')[currentSentenceIndex];
             if (!currentSentenceDiv) return;
             const currentSegments = currentSentenceDiv.querySelectorAll('.segment');
             
-            const normTyped = typedText.normalize('NFD');
-            const normTarget = targetHiragana.normalize('NFD');
-            
+            // --- SEGMENT MATCHING LOGIC ---
             const currentBlock = sentenceBlocks[currentSentenceIndex];
             let tempLength = 0;
             
             for (let i = 0; i < currentBlock.segments.length; i++) {
                 const segmentData = currentBlock.segments[i];
                 const segEl = currentSegments[i];
+                
+                const targetSegStr = (segmentData.furigana || segmentData.surface).normalize('NFC');
+                
                 const segStart = tempLength;
-                tempLength += segmentData.furigana.length;
+                tempLength += targetSegStr.length;
                 const segEnd = tempLength;
                 const segId = segEl.dataset.segId;
                 
+                if (typedText.length < segEnd) {
+                    if (spokenSegments.has(segId)) {
+                        spokenSegments.delete(segId);
+                    }
+                }
+
                 if (typedText.length >= segEnd) {
                     const typedSegment = typedText.substring(segStart, segEnd);
-                    if (typedSegment === segmentData.furigana) {
+                    if (typedSegment === targetSegStr) {
                         segEl.classList.remove('correct');
                         segEl.classList.add('completed');
-                        if (!spokenSegments.has(segId) && !isOnlyPunctuation(segmentData.furigana)) {
+                        segEl.style.removeProperty('--prog');
+                        
+                        if (!spokenSegments.has(segId) && !isOnlyPunctuation(targetSegStr)) {
                             spokenSegments.add(segId);
                             speakSegment(segmentData); 
                         }
                     } else {
                         segEl.classList.remove('completed');
-                        segEl.classList.add('correct');
+                        segEl.style.setProperty('--prog', '0%');
                     }
                 } else if (typedText.length > segStart && typedText.length < segEnd) {
-                    segEl.classList.add('correct');
+                    const typedPart = typedText.substring(segStart);
+                    const targetPart = targetSegStr.substring(0, typedPart.length);
+                    
+                    if (typedPart === targetPart) {
+                        const percent = (typedPart.length / targetSegStr.length) * 100;
+                        segEl.style.setProperty('--prog', percent + '%');
+                    } else {
+                        segEl.style.setProperty('--prog', '0%');
+                    }
                 } else {
-                    segEl.classList.remove('correct');
+                    segEl.style.setProperty('--prog', '0%');
+                    segEl.classList.remove('completed');
                 }
             }
             
+            // --- COMPLETION LOGIC ---
             if (typedText === targetHiragana) {
-                if (synth.speaking) synth.cancel();
                 hapticFeedback([15, 30]); 
+                
+                // Mark current sentence fully complete visually
+                userInputEl.classList.add('correct');
                 currentSegments.forEach(seg => {
                     seg.classList.remove('correct');
-                    seg.classList.add('completed');
+                    seg.style.setProperty('--prog', '100%'); 
                     spokenSegments.add(seg.dataset.segId);
                 });
-                currentSentenceIndex++;
-                setupNextSentence();
+
+                const isLastSentence = currentSentenceIndex === sentenceBlocks.length - 1;
+
+                if (isLastSentence) {
+                     // AUTO-FINISH ONLY FOR LAST SENTENCE
+                     userInputEl.disabled = true; 
+                     setTimeout(() => {
+                        userInputEl.disabled = false;
+                        currentSentenceIndex++;
+                        setupNextSentence(false); 
+                     }, 800);
+                } else {
+                    // IMMEDIATE TRANSITION LOGIC
+                    currentSentenceIndex++;
+
+                    if (userSettings.autoAdvance) {
+                        // AUTO DELETE ON: Clear input (false)
+                        setupNextSentence(false);
+                    } else {
+                        // AUTO DELETE OFF: Keep input (true)
+                        setupNextSentence(true);
+                    }
+                }
+
             } else {
-                if (typedText.length > 0 && normTarget.startsWith(normTyped)) {
+                isSentenceComplete = false;
+
+                if (targetHiragana.startsWith(typedText)) {
                     userInputEl.classList.add('correct');
                 } else {
                     if (!isComposing) {
-                        userInputEl.classList.add('incorrect');
-                        userInputEl.classList.add('shake');
-                        hapticFeedback([50, 30, 50]); 
-                        setTimeout(() => userInputEl.classList.remove('shake'), 400);
+                        let diffIndex = 0;
+                        while(diffIndex < typedText.length && diffIndex < targetHiragana.length && typedText[diffIndex] === targetHiragana[diffIndex]) {
+                            diffIndex++;
+                        }
+                        
+                        const typedChar = typedText[diffIndex];
+                        const targetChar = targetHiragana[diffIndex];
+                        
+                        if (typedChar && targetChar && checkJapaneseNuance(typedChar, targetChar)) {
+                             userInputEl.classList.add('warning');
+                             hapticFeedback([20]); 
+                        } else {
+                            userInputEl.classList.add('incorrect');
+                            userInputEl.classList.add('shake');
+                            hapticFeedback([50, 30, 50]); 
+                            setTimeout(() => userInputEl.classList.remove('shake'), 400);
+                        }
                     }
                 }
             }
         }
+        
+        // Listen for ENTER key to manually advance if sentence is done
+        userInputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && isSentenceComplete) {
+                e.preventDefault();
+                currentSentenceIndex++;
+                setupNextSentence();
+            }
+        });
 
         // --- SPA Navigation (Routing) ---
         function renderView(windowId) {
@@ -1311,18 +1472,13 @@
         }
 
         window.addEventListener('popstate', (event) => {
-            // 1. Handle Settings Modal Close
             if (settingsModal.classList.contains('open') && (!event.state || event.state.windowId !== 'settings')) {
                 settingsModal.classList.remove('open');
             }
-
-            // 2. Handle Video Modal Close
             if (videoModal.classList.contains('open') && (!event.state || event.state.windowId !== 'video')) {
                 videoModal.classList.remove('open');
                 setTimeout(() => { tutorialIframe.src = ""; }, 300);
             }
-
-            // 3. Handle Main View Navigation
             if (event.state && event.state.windowId) {
                 if (event.state.windowId === 'settings') {
                     settingsModal.classList.add('open');
@@ -1336,7 +1492,6 @@
             }
         });
 
-        // Use replaceState to set the initial state so back buttons work correctly from start
         history.replaceState({ windowId: 'library' }, '', '');
 
         // --- Event Listeners ---
@@ -1351,7 +1506,6 @@
              setupNextSentence();
         });
 
-        // --- JSON Import & Prompt Copy ---
         document.getElementById('copy-prompt-btn').addEventListener('click', () => {
              const fullPrompt = `Generate a JSON object for a short Japanese lesson.
 The lesson should contain three or more natural Japanese sentences. 
