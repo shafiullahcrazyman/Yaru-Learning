@@ -1508,41 +1508,55 @@
 
         document.getElementById('copy-prompt-btn').addEventListener('click', () => {
              const fullPrompt = `Generate a JSON object for a short Japanese lesson.
-The lesson should contain three or more natural Japanese sentences. 
-Format it exactly as JSON and wrap it in a triple-backtick code block labeled json so it’s ready to copy.
+
+The lesson must contain three or more natural Japanese sentences.
+
+IMPORTANT OUTPUT RULES:
+1) First, output ONLY the JSON lesson.
+2) Wrap the JSON in a triple-backtick code block labeled json.
+3) After the JSON block ends, output a separate section called "Lesson Ideas".
+4) The "Lesson Ideas" section must NOT be inside the JSON.
+5) The JSON must remain valid and unchanged.
 
 Follow this JSON structure EXACTLY:
 
 {
-"lessonTitle": "A creative title for the lesson",
-"contentBlocks": [
-{
-"type": "sentence",
-"id": "s1",
-"segments": [
-{
-"surface": "The Japanese word or particle (e.g., 私 or は)",
-"furigana": "The hiragana reading",
-"romaji": "The romaji reading",
-"meaning": "The English meaning",
-"isKanji": true
-}
-]
-}
-]
+  "lessonTitle": "A creative title for the lesson",
+  "contentBlocks": [
+    {
+      "type": "sentence",
+      "id": "s1",
+      "segments": [
+        {
+          "surface": "The Japanese word or particle (e.g., 私 or は)",
+          "furigana": "The hiragana reading",
+          "romaji": "The romaji reading",
+          "meaning": "The English meaning",
+          "isKanji": true
+        }
+      ]
+    }
+  ]
 }
 
-Rules:
-• Keep sentences simple and correct.
+Segment Rules:
+• Keep sentences simple, natural, and grammatically correct.
 • Split words and particles into separate segments.
 • Separate punctuation (、 。 ？ ！) into their own segments.
 • Use isKanji: true only for kanji.
 • Use isKanji: false for hiragana, katakana, and punctuation.
-• Furigana must be hiragana.
-• Romaji must match the furigana.
-• Keep segment order exactly as in the sentence.
+• Furigana must be hiragana only.
+• Romaji must match the furigana exactly.
+• Keep segment order exactly as it appears in the sentence.
 
-Return only valid JSON. No extra text.`;
+After the JSON block, include:
+
+Lesson Ideas:
+• Suggest exactly 5 new lesson ideas.
+• Each idea must have a different topic.
+• Keep the ideas short and clear.
+• Do NOT include JSON in this section.
+• Do NOT repeat the current lesson topic.`;
              navigator.clipboard.writeText(fullPrompt).then(() => {
                 const btn = document.getElementById('copy-prompt-btn');
                 btn.textContent = 'Copied!';
