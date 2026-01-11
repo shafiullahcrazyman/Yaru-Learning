@@ -6,7 +6,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" href="icon.png">
-    <meta name="theme-color" content="#2f3f14">
+    <meta name="theme-color" content="#121411">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Yaru Learning">
@@ -22,20 +22,20 @@
     <style>
         /* --- CSS Variables & Theming --- */
         :root {
-            /* Default Dark Theme Colors */
-            --background-color: #1f2616;
-            --surface-container: #232b18;
-            --surface-container-high: #2b351e;
-            --on-surface: #e7ebdd;
-            --on-surface-variant: #a0a88a;
+            /* Default Dark Theme Colors - UPDATED: Cleaner, professional dark mode */
+            --background-color: #121411;       /* Deep dark neutral with tiny green tint */
+            --surface-container: #1e201c;      /* Dark charcoal surface */
+            --surface-container-high: #2a2c27; /* Slightly lighter surface for cards/inputs */
+            --on-surface: #e2e3de;             /* Cleaner off-white text */
+            --on-surface-variant: #c2c4be;     /* Neutral gray text for secondary info */
             
             /* Material 3 Key Colors */
-            --m3-primary: #b6f06d;
+            --m3-primary: #b6f06d;             /* Your Main Green (Kept Same) */
             /* Text on primary color set to White */
             --m3-on-primary: #ffffff;
-            --m3-primary-container: #2f3f14;
+            --m3-primary-container: #2d3424;   /* Desaturated container background */
             
-            --glass-bg: rgba(18, 20, 12, 0.85);
+            --glass-bg: rgba(18, 20, 17, 0.9); /* More neutral glass effect */
 
             /* Shape/Icon Colors */
             --shape-color-1: #D0BCFF; 
@@ -53,8 +53,8 @@
             --error-bg: #410e0b;
             --warning-bg: rgba(255, 215, 0, 0.25);
             
-            --card-border: rgba(138, 147, 111, 0.3); 
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(138, 147, 111, 0.15); /* Subtler border */
+            --card-bg: rgba(255, 255, 255, 0.03);     /* Subtler card background */
 
             --radius-full: 999px;
             --radius-card: 28px; 
@@ -73,7 +73,9 @@
             --on-surface: #1b1f14;
             --on-surface-variant: #6b705f;
             
+            /* FIX: Bright Green Background */
             --m3-primary: #b6f06d;       
+            /* FIX: White Text/Icons (Restored as requested) */
             --m3-on-primary: #ffffff;    
             --m3-primary-container: #d2ff9a;
 
@@ -288,7 +290,7 @@
         }
 
         .settings-icon {
-            color: var(--on-surface-variant);
+            color: var(--on-surface);
             padding: 8px;
             cursor: pointer;
             border-radius: 50%;
@@ -535,35 +537,27 @@
             background-color: var(--surface-container);
         }
 
+        /* New Professional Icon Style */
         .story-shape-icon {
-            width: 80px;
-            height: 80px;
+            width: 56px;
+            height: 56px;
             flex-shrink: 0;
-            margin-right: 20px;
+            margin-right: 16px;
+            /* FIX: Set background to Main Color (Green) */
+            background-color: var(--m3-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* FIX: Set icon color to White */
+            color: var(--m3-on-primary);
         }
-
-        .color-1 { background-color: var(--shape-color-1); }
-        .color-2 { background-color: var(--shape-color-2); }
-        .color-3 { background-color: var(--shape-color-3); }
-        .color-4 { background-color: var(--shape-color-4); }
-        .color-5 { background-color: var(--shape-color-5); }
-        .color-6 { background-color: var(--shape-color-6); }
-
-        .shape-1 { clip-path: url(#s1); }
-        .shape-2 { clip-path: url(#s2); }
-        .shape-3 { clip-path: url(#s3); }
-        .shape-4 { clip-path: url(#s4); }
-        .shape-5 { clip-path: url(#s5); }
-        .shape-6 { clip-path: url(#s6); }
-        .shape-7 { clip-path: url(#s7); }
-        .shape-8 { clip-path: url(#s8); }
-        .shape-9 { clip-path: url(#s9); }
-        .shape-10 { clip-path: url(#s10); }
-        .shape-11 { clip-path: url(#s11); }
-        .shape-12 { clip-path: url(#s12); }
-        .shape-13 { clip-path: url(#s13); }
-        .shape-14 { clip-path: url(#s14); }
-        .shape-15 { clip-path: url(#s15); }
+        
+        .story-shape-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
 
         .story-info {
             flex-grow: 1;
@@ -599,7 +593,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--on-surface-variant);
+            color: var(--on-surface);
             border-radius: 50%;
             transition: transform 0.3s var(--ease-spring), color 0.2s;
             margin-left: 8px;
@@ -788,26 +782,6 @@
 </head>
 <body>
     
-    <!-- SVG ClipPaths used for Story Card Icons -->
-    <svg width="0" height="0" style="position: absolute;">
-      <defs>
-        <clipPath id="s1" clipPathUnits="objectBoundingBox"><circle cx="0.5" cy="0.5" r="0.5"/></clipPath>
-        <clipPath id="s2" clipPathUnits="objectBoundingBox"><rect x="0" y="0" width="1" height="1" rx="0.3"/></clipPath>
-        <clipPath id="s3" clipPathUnits="objectBoundingBox"><path d="M0.25,0.05 Q0.95,0.05 0.95,0.05 L0.75,0.95 Q0.05,0.95 0.05,0.95 Z"/></clipPath>
-        <clipPath id="s4" clipPathUnits="objectBoundingBox"><path d="M0,1 L0,0.5 A0.5,0.5 0 0,1 1,0.5 L1,1 Z"/></clipPath>
-        <clipPath id="s5" clipPathUnits="objectBoundingBox"><path d="M0,0.5 A0.5,0.5 0 0,1 1,0.5 L1,1 L0,1 Z"/></clipPath>
-        <clipPath id="s6" clipPathUnits="objectBoundingBox"><ellipse cx="0.5" cy="0.5" rx="0.4" ry="0.5" transform="rotate(20, 0.5, 0.5)"/></clipPath>
-        <clipPath id="s7" clipPathUnits="objectBoundingBox"><rect x="0.15" y="0.05" width="0.7" height="0.9" rx="0.35" transform="rotate(-15, 0.5, 0.5)"/></clipPath>
-        <clipPath id="s8" clipPathUnits="objectBoundingBox"><path d="M0.5,0.05 Q0.55,0.05 0.58,0.1 L0.92,0.85 Q0.95,0.95 0.85,0.95 L0.15,0.95 Q0.05,0.95 0.08,0.85 L0.42,0.1 Q0.45,0.05 0.5,0.05 Z"/></clipPath>
-        <clipPath id="s9" clipPathUnits="objectBoundingBox"><path d="M0.5,0.05 Q0.55,0.05 0.58,0.1 L0.95,0.6 Q1,0.65 0.9,0.7 L0.8,0.7 L0.8,0.9 Q0.8,1 0.7,1 L0.3,1 Q0.2,1 0.2,0.9 L0.2,0.7 L0.1,0.7 Q0,0.65 0.05,0.6 L0.42,0.1 Q0.45,0.05 0.5,0.05 Z"/></clipPath>
-        <clipPath id="s10" clipPathUnits="objectBoundingBox"><path d="M0,0 L1,0 A1,1 0 0,1 1,1 L1,1 L0,1 Z"/></clipPath>
-        <clipPath id="s11" clipPathUnits="objectBoundingBox"><rect x="0.15" y="0.15" width="0.7" height="0.7" rx="0.15" transform="rotate(45, 0.5, 0.5)"/></clipPath>
-        <clipPath id="s12" clipPathUnits="objectBoundingBox"><path d="M0.2,0.1 L0.8,0.1 Q0.95,0.1 1,0.3 L1,0.7 Q0.95,0.9 0.8,0.9 L0.2,0.9 Q0.05,0.9 0,0.7 L0,0.3 Q0.05,0.1 0.2,0.1 Z"/></clipPath>
-        <clipPath id="s13" clipPathUnits="objectBoundingBox"><path d="M0.5,0.05 Q0.55,0.05 0.6,0.1 L0.95,0.35 Q1,0.4 0.95,0.5 L0.8,0.9 Q0.75,1 0.65,1 L0.35,1 Q0.25,1 0.2,0.9 L0.05,0.5 Q0,0.4 0.05,0.35 L0.4,0.1 Q0.45,0.05 0.5,0.05 Z"/></clipPath>
-        <clipPath id="s14" clipPathUnits="objectBoundingBox"><path d="M0.3,0.05 L0.7,0.05 Q0.8,0.05 0.85,0.15 L0.95,0.4 Q1,0.5 0.95,0.6 L0.55,0.95 Q0.5,1 0.45,0.95 L0.05,0.6 Q0,0.5 0.05,0.4 L0.15,0.15 Q0.2,0.05 0.3,0.05 Z"/></clipPath>
-      </defs>
-    </svg>
-
     <!-- Settings Modal -->
     <div id="settings-modal">
         <div class="modal-content">
@@ -877,7 +851,7 @@
                             <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM10 16.5v-9l6 4.5-6 4.5z"/></svg>
                         </div>
                     </div>
-                    <div class="settings-icon" id="open-settings-btn">
+                   <div class="settings-icon" id="open-settings-btn">
                         <svg class="icon" viewBox="0 0 24 24"><path d="M4 18q-.425 0-.712-.288Q3 17.425 3 17t.288-.712Q3.575 16 4 16h16q.425 0 .712.288Q21 16.575 21 17t-.288.712Q20.425 18 20 18Zm0-5q-.425 0-.712-.288Q3 12.425 3 12t.288-.712Q3.575 11 4 11h16q.425 0 .712.288Q21 11.575 21 12t-.288.712Q20.425 13 20 13Zm0-5q-.425 0-.712-.288Q3 7.425 3 7t.288-.712Q3.575 6 4 6h16q.425 0 .712.288Q21 6.575 21 7t-.288.712Q20.425 8 20 8Z"/></svg>
                     </div>
                 </div>
@@ -1113,12 +1087,6 @@
 
         function addToLibrary(lessonObj) {
             lessonObj.id = Date.now().toString();
-            const shapeIndex = (libraryData.length % 14) + 1;
-            lessonObj.shape = `shape-${shapeIndex}`;
-            
-            const colorIndex = (libraryData.length % 6) + 1;
-            lessonObj.colorVariant = `color-${colorIndex}`;
-
             libraryData.unshift(lessonObj); 
             saveLibraryToStorage();
             renderLibrary();
@@ -1145,9 +1113,11 @@
                     card.className = 'story-card'; 
                     card.addEventListener('click', () => { navigateTo('lesson'); openLesson(lesson); });
                     
+                    // Replaced random shape generation with a static, professional Keyboard SVG
                     const shapeIcon = document.createElement('div');
-                    const colorClass = lesson.colorVariant || 'color-1';
-                    shapeIcon.className = `story-shape-icon ${lesson.shape || 'shape-1'} ${colorClass}`;
+                    shapeIcon.className = 'story-shape-icon';
+                    // Material Symbols "Keyboard" icon (Fixed path)
+                    shapeIcon.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg>`;
                     
                     const infoDiv = document.createElement('div');
                     infoDiv.className = 'story-info';
@@ -1167,7 +1137,7 @@
 
                     const delBtn = document.createElement('div');
                     delBtn.className = 'delete-card';
-                    delBtn.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M6,19c0,1.1,0.9,2,2,2h8c1.1,0,2-0.9,2-2V7H6V19z M19,4h-3.5l-1-1h-5l-1,1H5v2h14V4z"/></svg>';
+                    delBtn.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587Q5 19.825 5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413Q17.825 21 17 21ZM17 6H7v13h10ZM9 17h2V8H9Zm4 0h2V8h-2Z"/></svg>';
                     delBtn.onclick = (e) => { e.stopPropagation(); deleteFromLibrary(e, lesson.id); };
                     card.appendChild(shapeIcon); card.appendChild(infoDiv); card.appendChild(delBtn);
                     libraryGrid.appendChild(card);
